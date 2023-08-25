@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
 @Entity
-@Table(name= "user")
+@Table(name = "user")
 @NoArgsConstructor
 public class User {
 
@@ -30,13 +32,14 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "address_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Address address;
 
     public User(UserRequest userRequest) {
-        this.firstName= userRequest.getFirstName();
-        this.lastName= userRequest.getLastName();
-        this.gender= userRequest.getGender();
-        this.email=userRequest.getEmail();
-        this.phoneNo=userRequest.getPhoneNo();
+        this.firstName = userRequest.getFirstName();
+        this.lastName = userRequest.getLastName();
+        this.gender = userRequest.getGender();
+        this.email = userRequest.getEmail();
+        this.phoneNo = userRequest.getPhoneNo();
     }
 }

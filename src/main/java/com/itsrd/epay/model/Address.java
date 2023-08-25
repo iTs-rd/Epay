@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="address")
+@Table(name = "address")
 @NoArgsConstructor
 public class Address {
 
@@ -28,9 +28,9 @@ public class Address {
     private String zipCode;
 
     public Address(UserRequest userRequest) {
-        this.street=userRequest.getStreet();
-        this.city= userRequest.getCity();
-        this.state= userRequest.getState();
-        this.zipCode=userRequest.getZipCode();
+        this.street = userRequest.getStreet();
+        this.city = userRequest.getCity();
+        this.state = userRequest.getState();
+        this.zipCode = userRequest.getZipCode();
     }
 }

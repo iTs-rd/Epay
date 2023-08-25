@@ -9,4 +9,7 @@ public interface UserService {
 
     User saveUser(UserRequest userRequest);
 
+    User updateUser(Long id, UserRequest userRequest);
+
+    String deleteUser(Long id);
 }
