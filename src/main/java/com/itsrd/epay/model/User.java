@@ -1,6 +1,7 @@
 package com.itsrd.epay.model;
 
 
+import com.itsrd.epay.request.UserRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +24,19 @@ public class User {
 
     private String phoneNo;
 
+    private String email;
+
     private String gender;
 
-    // add address
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-
+    public User(UserRequest userRequest) {
+        this.firstName= userRequest.getFirstName();
+        this.lastName= userRequest.getLastName();
+        this.gender= userRequest.getGender();
+        this.email=userRequest.getEmail();
+        this.phoneNo=userRequest.getPhoneNo();
+    }
 }

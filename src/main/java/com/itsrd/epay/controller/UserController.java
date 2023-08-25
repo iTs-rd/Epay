@@ -1,8 +1,11 @@
 package com.itsrd.epay.controller;
 
 
+import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
+import com.itsrd.epay.request.UserRequest;
 import com.itsrd.epay.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +27,8 @@ public class UserController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
-        return new ResponseEntity<>(userService.saveUser(user),HttpStatus.CREATED);
+    public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest userRequest) {
+        return new ResponseEntity<>(userService.saveUser(userRequest),HttpStatus.CREATED);
     }
 
 }
