@@ -3,9 +3,7 @@ package com.itsrd.epay.model;
 
 import com.itsrd.epay.request.UserRequest;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -14,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -30,10 +29,9 @@ public class User {
 
     private String gender;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Address address;
+    private Long address_id;
+
+    private Long wallet_id;
 
     public User(UserRequest userRequest) {
         this.firstName = userRequest.getFirstName();
@@ -42,4 +40,5 @@ public class User {
         this.email = userRequest.getEmail();
         this.phoneNo = userRequest.getPhoneNo();
     }
+
 }
