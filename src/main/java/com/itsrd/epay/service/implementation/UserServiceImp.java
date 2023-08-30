@@ -1,5 +1,8 @@
 package com.itsrd.epay.service.implementation;
 
+import com.itsrd.epay.exception.CanNotChangePhoneNo;
+import com.itsrd.epay.exception.UserAlreadyExistsException;
+import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.model.Wallet;
@@ -9,8 +12,10 @@ import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.request.UserRequest;
 import com.itsrd.epay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -27,40 +32,39 @@ public class UserServiceImp implements UserService {
     @Autowired
     private WalletRepository walletRepository;
 
-    public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.walletRepository = walletRepository;
     }
 
     @Override
     public User saveUser(UserRequest userRequest) {
+
+        if(userRepository.findByPhoneNo(userRequest.getPhoneNo())!=null)
+            throw new UserAlreadyExistsException("User with Phone No: " + userRequest.getPhoneNo()+" already Exists");
 
         User user = new User(userRequest);
         Address address = new Address(userRequest);
         Wallet wallet=new Wallet();
 
         walletRepository.save(wallet);
-
         addressRepository.save(address);
 
         user.setAddress_id(address.getId());
         user.setWallet_id(wallet.getId());
 
-//        user.setAddress(address);
-
         userRepository.save(user);
 
         return user;
-
     }
 
     @Override
     public User getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isPresent())
-            return user.get();
-        else
-            throw new RuntimeException("User not found for the id: " + id);
+        if(user.isEmpty())
+            throw new UserNotFoundException("User not found for the id: " + id);
+        return user.get();
     }
 
 
@@ -68,9 +72,11 @@ public class UserServiceImp implements UserService {
     public User updateUser(Long id, UserRequest userRequest) {
         Optional<User> oldData = userRepository.findById(id);
 
-//        Not Working
         if (oldData.isEmpty())
-            throw new RuntimeException("User not found for the id: " + id);
+            throw new UserNotFoundException("User not found for the id: " + id);
+
+        if(!Objects.equals(oldData.get().getPhoneNo(), userRequest.getPhoneNo()))
+            throw new CanNotChangePhoneNo();
 
         User user = new User(userRequest);
         Address address = new Address(userRequest);
@@ -84,53 +90,49 @@ public class UserServiceImp implements UserService {
 
         address.setId(address_id);
 
-
-//        address.setId(oldData.get().getAddress().getId());
-
         addressRepository.save(address);
-
-//        user.setAddress(address);
-
         userRepository.save(user);
-        return user;
 
+        return user;
     }
 
     @Override
     public String deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
 
-//        Not Working
         if (user.isEmpty())
-            throw new RuntimeException("User not found for the id: " + id);
+            throw new UserNotFoundException("User not found for the id: " + id);
 
         Long address_id=user.get().getAddress_id();
         Long wallet_id=user.get().getWallet_id();
 
-
-
-//        Exception handling
         addressRepository.deleteById(address_id);
         walletRepository.deleteById(wallet_id);
         userRepository.deleteById(id);
 
-//        addressRepository.deleteById(user.get().getAddress().getId());
-
-        return "User having userId: " + id + " has been deleted";
+        return "User having userId: " + id + " has been deleted!";
     }
 
     @Override
     public Long getWalletIdFromUserId(Long user_id) {
-
         Optional<User> user=userRepository.findById(user_id);
 
-//        handle exception
         if (user.isEmpty())
-            throw new RuntimeException("User not found for the id: " + user_id);
+            throw new UserNotFoundException("User not found for the id: " + user_id);
 
         return user.get().getWallet_id();
 
     }
 
+    @Override
+    public User test(String phoneNo) {
 
+
+//        if(oldData.get().getPhoneNo() != userRequest.getPhoneNo())
+        throw new CanNotChangePhoneNo();
+//        if(userRepository.findByPhoneNo(phoneNo)!=null)
+//            System.out.println("hiii");
+//
+//        return userRepository.findByPhoneNo(phoneNo);
+    }
 }

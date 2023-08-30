@@ -1,5 +1,7 @@
 package com.itsrd.epay.service.implementation;
 
+import com.itsrd.epay.exception.CanNotTransferMoneyToSelf;
+import com.itsrd.epay.exception.InsufficientBalance;
 import com.itsrd.epay.model.Wallet;
 import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.request.DepositMoneyRequest;
@@ -58,7 +60,7 @@ public class WalletServiceImp implements WalletService {
         Double currentFunds = wallet.get().getAmount();
 
         if (currentFunds < withdrawMoneyRequest.getAmount())
-            throw new RuntimeException("Insufficient Balance");
+            throw new InsufficientBalance();
 
         Wallet newWallet = new Wallet(walletId, currentFunds - withdrawMoneyRequest.getAmount());
         walletRepository.save(newWallet);
@@ -74,6 +76,9 @@ public class WalletServiceImp implements WalletService {
     @Override
     @Transactional
     public String transferMoney(TransferMoneyRequest transferMoneyRequest) {
+        if(transferMoneyRequest.getRemitterUserId()==transferMoneyRequest.getBeneficiaryUserId())
+            throw new CanNotTransferMoneyToSelf();
+
         Long remitterWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getRemitterUserId());
 
         Optional<Wallet> remitterWallet = walletRepository.findById(remitterWalletId);
@@ -81,25 +86,20 @@ public class WalletServiceImp implements WalletService {
             throw new RuntimeException("Something went wrong");
 
         Double remitterCurrentFunds = remitterWallet.get().getAmount();
-
         if (remitterCurrentFunds < transferMoneyRequest.getAmount())
-            throw new RuntimeException("Insufficient Balance");
-
-
-        Wallet newRemitterWallet = new Wallet(remitterWalletId, remitterCurrentFunds - transferMoneyRequest.getAmount());
-        walletRepository.save(newRemitterWallet);
+            throw new InsufficientBalance();
 
         Long beneficiaryWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getBeneficiaryUserId());
-
         Optional<Wallet> beneficiaryWallet = walletRepository.findById(beneficiaryWalletId);
-
         if (beneficiaryWallet.isEmpty())
             throw new RuntimeException("Something went wrong");
 
-
         Double beneficiaryCurrentFunds = beneficiaryWallet.get().getAmount();
 
+        Wallet newRemitterWallet = new Wallet(remitterWalletId, remitterCurrentFunds - transferMoneyRequest.getAmount());
         Wallet newBeneficiaryWallet = new Wallet(beneficiaryWalletId, beneficiaryCurrentFunds + transferMoneyRequest.getAmount());
+
+        walletRepository.save(newRemitterWallet);
         walletRepository.save(newBeneficiaryWallet);
 
         String type = "Transfer";

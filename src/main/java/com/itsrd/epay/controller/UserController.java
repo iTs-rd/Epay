@@ -1,6 +1,7 @@
 package com.itsrd.epay.controller;
 
 
+import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.request.UserRequest;
@@ -20,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<User> getUser(@RequestParam Long id) {
+    public ResponseEntity<User> getUser(@RequestParam Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
@@ -40,5 +41,11 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.ACCEPTED);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<User> test(@RequestParam String phoneNo) {
+        return new ResponseEntity<>(userService.test(phoneNo),HttpStatus.OK);
+    }
+
 
 }
