@@ -3,7 +3,6 @@ package com.itsrd.epay.model;
 
 import com.itsrd.epay.request.UserRequest;
 import jakarta.persistence.*;
-import jdk.jfr.Timestamp;
 import lombok.*;
 
 @Getter

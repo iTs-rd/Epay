@@ -2,7 +2,6 @@ package com.itsrd.epay.controller;
 
 
 import com.itsrd.epay.exception.UserNotFoundException;
-import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.request.UserRequest;
 import com.itsrd.epay.service.UserService;
@@ -44,7 +43,7 @@ public class UserController {
 
     @GetMapping("/test")
     public ResponseEntity<User> test(@RequestParam String phoneNo) {
-        return new ResponseEntity<>(userService.test(phoneNo),HttpStatus.OK);
+        return new ResponseEntity<>(userService.test(phoneNo), HttpStatus.OK);
     }
 
 

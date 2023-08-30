@@ -14,25 +14,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
-
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = CanNotChangePhoneNo.class)
-    public ResponseEntity<Object> canNotChangePhoneNo(CanNotChangePhoneNo canNotChangePhoneNo){
+    public ResponseEntity<Object> canNotChangePhoneNo(CanNotChangePhoneNo canNotChangePhoneNo) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("message","Phone Number Can Not Be Changed");
+        body.put("message", "Phone Number Can Not Be Changed");
         body.put("status", 406);
         return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(value = InsufficientBalance.class)
-    public ResponseEntity<Object> insufficientBalance(InsufficientBalance insufficientBalance){
+    public ResponseEntity<Object> insufficientBalance(InsufficientBalance insufficientBalance) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("message","Insufficient Balance!");
+        body.put("message", "Insufficient Balance!");
         body.put("status", 406);
         return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
     }
@@ -41,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     public ResponseEntity<Object> canNotTransferMoneyToSelf(CanNotTransferMoneyToSelf canNotTransferMoneyToSelf) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("message","You can not tansfer money to yourself!");
+        body.put("message", "You can not tansfer money to yourself!");
         body.put("status", 406);
         return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
     }
@@ -50,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     public ResponseEntity<Object> userNotFoundException(UserNotFoundException userNotFoundException) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("message",userNotFoundException.getMessage());
+        body.put("message", userNotFoundException.getMessage());
         body.put("status", 404);
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
@@ -59,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     public ResponseEntity<Object> userAlreadyExistsException(UserAlreadyExistsException userAlreadyExistsException) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("message",userAlreadyExistsException.getMessage());
+        body.put("message", userAlreadyExistsException.getMessage());
         body.put("status", 409);
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
@@ -83,7 +81,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     }
 
 }
-
 
 
 //@ControllerAdvice

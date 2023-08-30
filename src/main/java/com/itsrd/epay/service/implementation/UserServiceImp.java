@@ -12,7 +12,6 @@ import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.request.UserRequest;
 import com.itsrd.epay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
-
 
     @Autowired
     private UserRepository userRepository;
@@ -38,15 +36,20 @@ public class UserServiceImp implements UserService {
         this.walletRepository = walletRepository;
     }
 
+    private void checkIfUserExist(String phoneNo) {
+        if (userRepository.findByPhoneNo(phoneNo) != null)
+            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
+
+    }
+
     @Override
     public User saveUser(UserRequest userRequest) {
 
-        if(userRepository.findByPhoneNo(userRequest.getPhoneNo())!=null)
-            throw new UserAlreadyExistsException("User with Phone No: " + userRequest.getPhoneNo()+" already Exists");
+        checkIfUserExist(userRequest.getPhoneNo());
 
         User user = new User(userRequest);
         Address address = new Address(userRequest);
-        Wallet wallet=new Wallet();
+        Wallet wallet = new Wallet();
 
         walletRepository.save(wallet);
         addressRepository.save(address);
@@ -62,7 +65,7 @@ public class UserServiceImp implements UserService {
     @Override
     public User getUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty())
+        if (user.isEmpty())
             throw new UserNotFoundException("User not found for the id: " + id);
         return user.get();
     }
@@ -75,14 +78,14 @@ public class UserServiceImp implements UserService {
         if (oldData.isEmpty())
             throw new UserNotFoundException("User not found for the id: " + id);
 
-        if(!Objects.equals(oldData.get().getPhoneNo(), userRequest.getPhoneNo()))
+        if (!Objects.equals(oldData.get().getPhoneNo(), userRequest.getPhoneNo()))
             throw new CanNotChangePhoneNo();
 
         User user = new User(userRequest);
         Address address = new Address(userRequest);
 
-        Long address_id=oldData.get().getAddress_id();
-        Long wallet_id=oldData.get().getWallet_id();
+        Long address_id = oldData.get().getAddress_id();
+        Long wallet_id = oldData.get().getWallet_id();
 
         user.setId(id);
         user.setAddress_id(address_id);
@@ -103,8 +106,8 @@ public class UserServiceImp implements UserService {
         if (user.isEmpty())
             throw new UserNotFoundException("User not found for the id: " + id);
 
-        Long address_id=user.get().getAddress_id();
-        Long wallet_id=user.get().getWallet_id();
+        Long address_id = user.get().getAddress_id();
+        Long wallet_id = user.get().getWallet_id();
 
         addressRepository.deleteById(address_id);
         walletRepository.deleteById(wallet_id);
@@ -115,7 +118,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Long getWalletIdFromUserId(Long user_id) {
-        Optional<User> user=userRepository.findById(user_id);
+        Optional<User> user = userRepository.findById(user_id);
 
         if (user.isEmpty())
             throw new UserNotFoundException("User not found for the id: " + user_id);

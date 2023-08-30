@@ -4,8 +4,6 @@ package com.itsrd.epay.model;
 import com.itsrd.epay.request.UserRequest;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter

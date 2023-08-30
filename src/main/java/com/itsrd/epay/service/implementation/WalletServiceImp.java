@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,16 @@ public class WalletServiceImp implements WalletService {
     @Autowired
     private WalletRepository walletRepository;
 
+    private void checkForInsufficientBalance(Double currentFunds, Double withdrawAmount) {
+        if (currentFunds < withdrawAmount)
+            throw new InsufficientBalance();
+    }
+
+    private void checkForSelfTransfer(Long remitterUserId, Long beneficiaryUserId) {
+        if (Objects.equals(remitterUserId, beneficiaryUserId))
+            throw new CanNotTransferMoneyToSelf();
+
+    }
 
     @Override
     public String depositMoney(DepositMoneyRequest depositMoneyRequest) {
@@ -59,8 +70,7 @@ public class WalletServiceImp implements WalletService {
 
         Double currentFunds = wallet.get().getAmount();
 
-        if (currentFunds < withdrawMoneyRequest.getAmount())
-            throw new InsufficientBalance();
+        checkForInsufficientBalance(currentFunds, withdrawMoneyRequest.getAmount());
 
         Wallet newWallet = new Wallet(walletId, currentFunds - withdrawMoneyRequest.getAmount());
         walletRepository.save(newWallet);
@@ -76,8 +86,7 @@ public class WalletServiceImp implements WalletService {
     @Override
     @Transactional
     public String transferMoney(TransferMoneyRequest transferMoneyRequest) {
-        if(transferMoneyRequest.getRemitterUserId()==transferMoneyRequest.getBeneficiaryUserId())
-            throw new CanNotTransferMoneyToSelf();
+        checkForSelfTransfer(transferMoneyRequest.getRemitterUserId(), transferMoneyRequest.getBeneficiaryUserId());
 
         Long remitterWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getRemitterUserId());
 
@@ -86,8 +95,8 @@ public class WalletServiceImp implements WalletService {
             throw new RuntimeException("Something went wrong");
 
         Double remitterCurrentFunds = remitterWallet.get().getAmount();
-        if (remitterCurrentFunds < transferMoneyRequest.getAmount())
-            throw new InsufficientBalance();
+
+        checkForInsufficientBalance(remitterCurrentFunds, transferMoneyRequest.getAmount());
 
         Long beneficiaryWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getBeneficiaryUserId());
         Optional<Wallet> beneficiaryWallet = walletRepository.findById(beneficiaryWalletId);
