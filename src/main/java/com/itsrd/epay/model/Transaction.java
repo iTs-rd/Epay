@@ -1,23 +1,19 @@
 package com.itsrd.epay.model;
 
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import java.time.LocalDateTime;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "transaction")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(indexName = "transaction")
 public class Transaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     private Long remitterUserId;
@@ -26,17 +22,21 @@ public class Transaction {
     private String type;
 
     @NotNull
+    private Double amount;
+
+    @NotNull
     private String description;
 
     private String remark;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    private java.util.Date createdAt;
 
-    public Transaction(Long remitterUserId, String type, String description, String remark) {
+    public Transaction(Long remitterUserId, String type, Double amount, String description, String remark) {
         this.remitterUserId = remitterUserId;
         this.type = type;
+        this.amount = amount;
         this.description = description;
         this.remark = remark;
+        this.createdAt = new java.util.Date();
     }
 }

@@ -40,47 +40,63 @@ public class WalletServiceImp implements WalletService {
 
     }
 
+    private String logWithdrawal(Long account, Double amount, String remark) {
+        String description = "Rupee " + amount + " has been debited from your wallet";
+        transactionService.addRecord(account, "Withdraw", amount, description, remark);
+        return description;
+    }
+
+    private String logDeposit(Long account, Double amount, String remark) {
+        String description = "Rupee " + amount + " has been credited to your wallet";
+        transactionService.addRecord(account, "Deposit", amount, description, remark);
+        return description;
+    }
+
+    private String logTransfer(Long remitter, Long beneficiary, Double amount, String remark) {
+        String remitterDescription = "Rupee " + amount + " has been Transfer to user ID " + beneficiary;
+        String beneficiaryDescription = "Rupee " + amount + " has been send by User ID " + remitter;
+
+        transactionService.addRecord(remitter, "Send", amount, remitterDescription, remark);
+        transactionService.addRecord(beneficiary, "Receive", amount, beneficiaryDescription, remark);
+        return remitterDescription;
+
+    }
+
+    private void withdrawMoneyFromWallet(Long walletId, Double amount) {
+        Optional<Wallet> wallet = walletRepository.findById(walletId);
+        if (wallet.isEmpty())
+            throw new RuntimeException("Withdrawal Wallet Not Found!");
+
+        Double currentFunds = wallet.get().getAmount();
+        checkForInsufficientBalance(currentFunds, amount);
+
+        Wallet newWallet = new Wallet(walletId, currentFunds - amount);
+        walletRepository.save(newWallet);
+    }
+
+    private void addMoneyToWallet(Long walletId, Double amount) {
+        Optional<Wallet> wallet = walletRepository.findById(walletId);
+        if (wallet.isEmpty())
+            throw new RuntimeException("Depositor Wallet Not Found!");
+
+        Double currentFunds = wallet.get().getAmount();
+        Wallet newWallet = new Wallet(walletId, currentFunds + amount);
+        walletRepository.save(newWallet);
+
+    }
+
     @Override
     public String depositMoney(DepositMoneyRequest depositMoneyRequest) {
         Long walletId = userService.getWalletIdFromUserId(depositMoneyRequest.getRemitterUserId());
-
-        Optional<Wallet> wallet = walletRepository.findById(walletId);
-        if (wallet.isEmpty())
-            throw new RuntimeException("Something went wrong");
-
-        Double currentFunds = wallet.get().getAmount();
-        Wallet newWallet = new Wallet(walletId, currentFunds + depositMoneyRequest.getAmount());
-        walletRepository.save(newWallet);
-
-        String type = "Deposit";
-        String description = "Rupee " + depositMoneyRequest.getAmount() + " has been credited to your wallet";
-
-        transactionService.addRecord(depositMoneyRequest.getRemitterUserId(), type, description, depositMoneyRequest.getRemark());
-
-        return description;
+        addMoneyToWallet(walletId, depositMoneyRequest.getAmount());
+        return logDeposit(depositMoneyRequest.getRemitterUserId(), depositMoneyRequest.getAmount(), depositMoneyRequest.getRemark());
     }
 
     @Override
     public String withdrawMoney(WithdrawMoneyRequest withdrawMoneyRequest) {
         Long walletId = userService.getWalletIdFromUserId(withdrawMoneyRequest.getRemitterUserId());
-
-        Optional<Wallet> wallet = walletRepository.findById(walletId);
-        if (wallet.isEmpty())
-            throw new RuntimeException("Something went wrong");
-
-        Double currentFunds = wallet.get().getAmount();
-
-        checkForInsufficientBalance(currentFunds, withdrawMoneyRequest.getAmount());
-
-        Wallet newWallet = new Wallet(walletId, currentFunds - withdrawMoneyRequest.getAmount());
-        walletRepository.save(newWallet);
-
-        String type = "Withdraw";
-        String description = "Rupee " + withdrawMoneyRequest.getAmount() + " has been debited from your wallet";
-
-        transactionService.addRecord(withdrawMoneyRequest.getRemitterUserId(), type, description, withdrawMoneyRequest.getRemark());
-
-        return description;
+        withdrawMoneyFromWallet(walletId, withdrawMoneyRequest.getAmount());
+        return logWithdrawal(withdrawMoneyRequest.getRemitterUserId(), withdrawMoneyRequest.getAmount(), withdrawMoneyRequest.getRemark());
     }
 
     @Override
@@ -89,33 +105,12 @@ public class WalletServiceImp implements WalletService {
         checkForSelfTransfer(transferMoneyRequest.getRemitterUserId(), transferMoneyRequest.getBeneficiaryUserId());
 
         Long remitterWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getRemitterUserId());
-
-        Optional<Wallet> remitterWallet = walletRepository.findById(remitterWalletId);
-        if (remitterWallet.isEmpty())
-            throw new RuntimeException("Something went wrong");
-
-        Double remitterCurrentFunds = remitterWallet.get().getAmount();
-
-        checkForInsufficientBalance(remitterCurrentFunds, transferMoneyRequest.getAmount());
-
         Long beneficiaryWalletId = userService.getWalletIdFromUserId(transferMoneyRequest.getBeneficiaryUserId());
-        Optional<Wallet> beneficiaryWallet = walletRepository.findById(beneficiaryWalletId);
-        if (beneficiaryWallet.isEmpty())
-            throw new RuntimeException("Something went wrong");
 
-        Double beneficiaryCurrentFunds = beneficiaryWallet.get().getAmount();
+        withdrawMoneyFromWallet(remitterWalletId, transferMoneyRequest.getAmount());
+        addMoneyToWallet(beneficiaryWalletId, transferMoneyRequest.getAmount());
 
-        Wallet newRemitterWallet = new Wallet(remitterWalletId, remitterCurrentFunds - transferMoneyRequest.getAmount());
-        Wallet newBeneficiaryWallet = new Wallet(beneficiaryWalletId, beneficiaryCurrentFunds + transferMoneyRequest.getAmount());
-
-        walletRepository.save(newRemitterWallet);
-        walletRepository.save(newBeneficiaryWallet);
-
-        String type = "Transfer";
-        String description = "Rupee " + transferMoneyRequest.getAmount() + " has been Transfer to " + transferMoneyRequest.getBeneficiaryUserId();
-
-        transactionService.addRecord(transferMoneyRequest.getRemitterUserId(), type, description, transferMoneyRequest.getRemark());
-        return description;
+        return logTransfer(transferMoneyRequest.getRemitterUserId(), transferMoneyRequest.getBeneficiaryUserId(), transferMoneyRequest.getAmount(), transferMoneyRequest.getRemark());
     }
 
     @Override
@@ -124,9 +119,8 @@ public class WalletServiceImp implements WalletService {
 
         Optional<Wallet> wallet = walletRepository.findById(walletId);
         if (wallet.isEmpty())
-            throw new RuntimeException("Something went wrong");
+            throw new RuntimeException("Wallet Not Found!");
 
         return "Your current Wallet Balance is " + wallet.get().getAmount();
     }
-
 }

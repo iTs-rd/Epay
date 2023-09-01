@@ -24,12 +24,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
-
     @PostMapping("/save")
     public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest userRequest) {
         return new ResponseEntity<>(userService.saveUser(userRequest), HttpStatus.CREATED);
     }
-
 
     @PutMapping("/update/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
@@ -45,6 +43,4 @@ public class UserController {
     public ResponseEntity<User> test(@RequestParam String phoneNo) {
         return new ResponseEntity<>(userService.test(phoneNo), HttpStatus.OK);
     }
-
-
 }

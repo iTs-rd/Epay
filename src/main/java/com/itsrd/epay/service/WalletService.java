@@ -12,5 +12,4 @@ public interface WalletService {
     String checkBalance(Long id);
 
     String transferMoney(TransferMoneyRequest transferMoneyRequest);
-
 }

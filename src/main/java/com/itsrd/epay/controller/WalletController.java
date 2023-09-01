@@ -45,5 +45,4 @@ public class WalletController {
         Long userId = Long.valueOf(id);
         return new ResponseEntity<>(walletService.checkBalance(userId), HttpStatus.OK);
     }
-
 }
