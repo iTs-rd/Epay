@@ -1,7 +1,7 @@
 package com.itsrd.epay.model;
 
 
-import com.itsrd.epay.request.UserRequest;
+import com.itsrd.epay.dto.UserRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +27,15 @@ public class User {
 
     private String gender;
 
+//    ignore
+    private String password;
+
+    //    ignore
+    private boolean isActive;
+
+    //    ignore
+    private String roles;
+
     private Long address_id;
 
     private Long wallet_id;
@@ -37,6 +46,10 @@ public class User {
         this.gender = userRequest.getGender();
         this.email = userRequest.getEmail();
         this.phoneNo = userRequest.getPhoneNo();
+        this.password=userRequest.getPassword();
+
+        this.roles="ROLE_ADMIN";
+        this.isActive=false;
     }
 
 }

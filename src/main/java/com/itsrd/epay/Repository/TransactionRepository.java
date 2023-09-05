@@ -1,4 +1,4 @@
-package com.itsrd.epay.repository;
+package com.itsrd.epay.Repository;
 
 import com.itsrd.epay.model.Transaction;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,8 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.request.DepositMoneyRequest;
-import com.itsrd.epay.request.TransferMoneyRequest;
-import com.itsrd.epay.request.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.DepositMoneyRequest;
+import com.itsrd.epay.dto.TransferMoneyRequest;
+import com.itsrd.epay.dto.WithdrawMoneyRequest;
 
 public interface WalletService {
     String depositMoney(DepositMoneyRequest depositMoneyRequest);

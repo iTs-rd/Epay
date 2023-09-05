@@ -1,4 +1,4 @@
-package com.itsrd.epay.request;
+package com.itsrd.epay.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DepositMoneyRequest {
+public class TransferMoneyRequest {
     @NotNull
     private Long remitterUserId;
 
@@ -16,4 +16,7 @@ public class DepositMoneyRequest {
     private Double amount;
 
     private String remark;
+
+    @NotNull
+    private Long beneficiaryUserId;
 }

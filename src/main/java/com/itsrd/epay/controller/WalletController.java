@@ -1,9 +1,9 @@
 package com.itsrd.epay.controller;
 
 
-import com.itsrd.epay.request.DepositMoneyRequest;
-import com.itsrd.epay.request.TransferMoneyRequest;
-import com.itsrd.epay.request.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.DepositMoneyRequest;
+import com.itsrd.epay.dto.TransferMoneyRequest;
+import com.itsrd.epay.dto.WithdrawMoneyRequest;
 import com.itsrd.epay.service.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

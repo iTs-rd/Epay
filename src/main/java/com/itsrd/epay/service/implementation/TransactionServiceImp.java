@@ -1,7 +1,7 @@
 package com.itsrd.epay.service.implementation;
 
 import com.itsrd.epay.model.Transaction;
-import com.itsrd.epay.repository.TransactionRepository;
+import com.itsrd.epay.Repository.TransactionRepository;
 import com.itsrd.epay.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,7 +1,7 @@
 package com.itsrd.epay.model;
 
 
-import com.itsrd.epay.request.UserRequest;
+import com.itsrd.epay.dto.UserRequest;
 import jakarta.persistence.*;
 import lombok.*;
 

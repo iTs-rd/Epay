@@ -1,10 +1,9 @@
-package com.itsrd.epay.request;
+package com.itsrd.epay.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,6 +26,10 @@ public class UserRequest {
     @NotNull(message = phoneNoMessage)
     @Size(min = 10, max = 10, message = phoneNoMessage)
     private String phoneNo;
+
+    @NotNull
+    @Size(min = 4, max = 256)
+    private String password;
 
     @NotNull
     @Email
