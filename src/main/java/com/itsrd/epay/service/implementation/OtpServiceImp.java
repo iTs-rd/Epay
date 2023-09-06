@@ -2,6 +2,7 @@ package com.itsrd.epay.service.implementation;
 
 import com.itsrd.epay.Repository.OtpRepository;
 import com.itsrd.epay.dto.VerifyPhoneNoRequest;
+import com.itsrd.epay.exception.NoOtpFound;
 import com.itsrd.epay.model.Otp;
 import com.itsrd.epay.service.OtpService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +24,17 @@ public class OtpServiceImp implements OtpService {
 
     @Override
     public void generateOtp(String phoneNo) {
-        Otp otp=new Otp(phoneNo,generatedOtp);
+        Otp otp = new Otp(phoneNo, generatedOtp);
         otpRepository.save(otp);
-        log.info("Generated OTP is {}",generatedOtp);
-        return;
+        log.info("Generated OTP is: " + generatedOtp);
     }
 
     @Override
     public boolean verifyOtp(VerifyPhoneNoRequest verifyPhoneNoRequest) {
-        Optional<Otp> otp=otpRepository.findByPhoneNo(verifyPhoneNoRequest.getPhoneNo());
+        Optional<Otp> otp = otpRepository.findByPhoneNo(verifyPhoneNoRequest.getPhoneNo());
 
-//        customize
-        if(otp.isEmpty())
-            throw new RuntimeException("Internal Server Error");
+        if (otp.isEmpty())
+            throw new NoOtpFound("No OTP found for Phone no: " + verifyPhoneNoRequest.getPhoneNo());
 
         return Objects.equals(verifyPhoneNoRequest.getOtp(), otp.get().getOtp());
 

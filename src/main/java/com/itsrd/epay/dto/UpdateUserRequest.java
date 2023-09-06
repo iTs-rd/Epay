@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequest {
+public class UpdateUserRequest {
 
     private final String firstNameMessage = "First Name Should be between 1 to 256 characters";
     private final String lastNameMessage = "Last Name Should be between 1 to 256 characters";

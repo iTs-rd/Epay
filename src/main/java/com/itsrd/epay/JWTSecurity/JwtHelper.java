@@ -22,7 +22,6 @@ public class JwtHelper {
     @Value("${jwt.secret}")
     private String secret;
 
-
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }

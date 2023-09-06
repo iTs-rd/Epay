@@ -8,8 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WithdrawMoneyRequest {
-    @NotNull
-    private Long remitterUserId;
 
     @NotNull
     @Min(value = 1)

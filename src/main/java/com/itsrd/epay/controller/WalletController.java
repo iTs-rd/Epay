@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/wallet")
@@ -26,23 +25,23 @@ public class WalletController {
 
 
     @PostMapping("/deposit")
-    public ResponseEntity<String> depositMoney(@Valid @RequestBody DepositMoneyRequest depositMoneyRequest) {
-        return new ResponseEntity<>(walletService.depositMoney(depositMoneyRequest), HttpStatus.OK);
+    public ResponseEntity<String> depositMoney(Principal principal, @Valid @RequestBody DepositMoneyRequest depositMoneyRequest) {
+        return new ResponseEntity<>(walletService.depositMoney(principal, depositMoneyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/withdrawal")
-    public ResponseEntity<String> withdrawalMoney(@Valid @RequestBody WithdrawMoneyRequest withdrawMoneyRequest) {
-        return new ResponseEntity<>(walletService.withdrawMoney(withdrawMoneyRequest), HttpStatus.OK);
+    public ResponseEntity<String> withdrawalMoney(Principal principal, @Valid @RequestBody WithdrawMoneyRequest withdrawMoneyRequest) {
+        return new ResponseEntity<>(walletService.withdrawMoney(principal, withdrawMoneyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<String> transferMoney(@Valid @RequestBody TransferMoneyRequest transferMoneyRequest) {
-        return new ResponseEntity<>(walletService.transferMoney(transferMoneyRequest), HttpStatus.OK);
+    public ResponseEntity<String> transferMoney(Principal principal, @Valid @RequestBody TransferMoneyRequest transferMoneyRequest) {
+        return new ResponseEntity<>(walletService.transferMoney(principal, transferMoneyRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/checkbalance")
-    public ResponseEntity<String> checkBalance(@RequestBody String id) {
-        Long userId = Long.valueOf(id);
-        return new ResponseEntity<>(walletService.checkBalance(userId), HttpStatus.OK);
+    @GetMapping("/checkbalance")
+    public ResponseEntity<String> checkBalance(Principal principal) {
+//        Long userId = Long.valueOf(id);
+        return new ResponseEntity<>(walletService.checkBalance(principal), HttpStatus.OK);
     }
 }

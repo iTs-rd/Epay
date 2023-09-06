@@ -16,7 +16,7 @@ public class Transaction {
     private String id;
 
     @NotNull
-    private Long remitterUserId;
+    private String remitterPhoneNo;
 
     @NotNull
     private String type;
@@ -31,8 +31,8 @@ public class Transaction {
 
     private java.util.Date createdAt;
 
-    public Transaction(Long remitterUserId, String type, Double amount, String description, String remark) {
-        this.remitterUserId = remitterUserId;
+    public Transaction(String remitterPhoneNo, String type, Double amount, String description, String remark) {
+        this.remitterPhoneNo = remitterPhoneNo;
         this.type = type;
         this.amount = amount;
         this.description = description;

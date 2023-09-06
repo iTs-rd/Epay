@@ -1,9 +1,13 @@
 package com.itsrd.epay.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.itsrd.epay.dto.UserRequest;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -27,17 +31,19 @@ public class User {
 
     private String gender;
 
-//    ignore
+    @JsonIgnore
     private String password;
 
-    //    ignore
+    @JsonIgnore
     private boolean isActive;
 
-    //    ignore
+    @JsonIgnore
     private String roles;
 
+    @JsonIgnore
     private Long address_id;
 
+    @JsonIgnore
     private Long wallet_id;
 
     public User(UserRequest userRequest) {
@@ -46,10 +52,10 @@ public class User {
         this.gender = userRequest.getGender();
         this.email = userRequest.getEmail();
         this.phoneNo = userRequest.getPhoneNo();
-        this.password=userRequest.getPassword();
+        this.password = userRequest.getPassword();
 
-        this.roles="ROLE_ADMIN";
-        this.isActive=false;
+        this.roles = "ROLE_USER";
+        this.isActive = false;
     }
 
 }

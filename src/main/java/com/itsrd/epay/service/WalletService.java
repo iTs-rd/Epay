@@ -4,12 +4,14 @@ import com.itsrd.epay.dto.DepositMoneyRequest;
 import com.itsrd.epay.dto.TransferMoneyRequest;
 import com.itsrd.epay.dto.WithdrawMoneyRequest;
 
+import java.security.Principal;
+
 public interface WalletService {
-    String depositMoney(DepositMoneyRequest depositMoneyRequest);
+    String depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest);
 
-    String withdrawMoney(WithdrawMoneyRequest withdrawMoneyRequest);
+    String withdrawMoney(Principal principal, WithdrawMoneyRequest withdrawMoneyRequest);
 
-    String checkBalance(Long id);
+    String checkBalance(Principal principal);
 
-    String transferMoney(TransferMoneyRequest transferMoneyRequest);
+    String transferMoney(Principal principal, TransferMoneyRequest transferMoneyRequest);
 }

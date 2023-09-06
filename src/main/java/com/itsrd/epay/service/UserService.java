@@ -1,9 +1,9 @@
 package com.itsrd.epay.service;
 
+import com.itsrd.epay.dto.UserRequest;
 import com.itsrd.epay.dto.VerifyPhoneNoRequest;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.model.User;
-import com.itsrd.epay.dto.UserRequest;
 
 import java.security.Principal;
 
@@ -13,13 +13,11 @@ public interface UserService {
 
     User saveUser(UserRequest userRequest);
 
-    User updateUser(Long id, UserRequest userRequest);
+    User updateUserDetails(Principal principal, UserRequest userRequest);
 
-    String deleteUser(Long id);
+    String deleteUser(Principal principal);
 
-    Long getWalletIdFromUserId(Long user_id);
-
-    User test(String phoneNo);
-
+    Long getWalletIdFromPhoneNo(String phoneNo);
+    
     String verifyPhoneNo(VerifyPhoneNoRequest verifyPhoneNoRequest);
 }

@@ -2,9 +2,11 @@ package com.itsrd.epay.service;
 
 import com.itsrd.epay.model.Transaction;
 
-public interface TransactionService {
-    void addRecord(Long remitterUserId, String type, Double amount, String description, String remark);
+import java.security.Principal;
 
-    Iterable<Transaction> getStatement(Long id, int pageNumber);
+public interface TransactionService {
+    void addRecord(String remitterPhoneNo, String type, Double amount, String description, String remark);
+
+    Iterable<Transaction> getStatement(Principal principal, int pageNumber);
 
 }

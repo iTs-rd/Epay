@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/statement")
 public class TransactionController {
@@ -17,8 +19,8 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping("/user")
-    public ResponseEntity<Iterable<Transaction>> getByUser(@RequestParam Long id, @RequestParam Integer pageNumber) {
-        return new ResponseEntity<>(transactionService.getStatement(id, pageNumber), HttpStatus.OK);
+    @GetMapping("")
+    public ResponseEntity<Iterable<Transaction>> getByUser(Principal principal, @RequestParam Integer pageNumber) {
+        return new ResponseEntity<>(transactionService.getStatement(principal, pageNumber), HttpStatus.OK);
     }
 }
