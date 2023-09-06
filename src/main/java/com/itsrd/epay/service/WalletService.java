@@ -1,8 +1,8 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.dto.DepositMoneyRequest;
-import com.itsrd.epay.dto.TransferMoneyRequest;
-import com.itsrd.epay.dto.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.requests.DepositMoneyRequest;
+import com.itsrd.epay.dto.requests.TransferMoneyRequest;
+import com.itsrd.epay.dto.requests.WithdrawMoneyRequest;
 
 import java.security.Principal;
 

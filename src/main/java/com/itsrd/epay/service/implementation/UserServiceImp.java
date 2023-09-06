@@ -1,9 +1,15 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.dto.UserRequest;
-import com.itsrd.epay.dto.VerifyPhoneNoRequest;
+import com.itsrd.epay.configuration.CustomUserDetails;
+import com.itsrd.epay.configuration.CustomUserDetailsService;
+import com.itsrd.epay.dto.requests.CreateUserRequest;
+import com.itsrd.epay.dto.requests.LoginRequest;
+import com.itsrd.epay.dto.requests.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.*;
 import com.itsrd.epay.exception.UserAlreadyExistsException;
 import com.itsrd.epay.exception.UserNotFoundException;
+import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.model.Wallet;
@@ -13,6 +19,10 @@ import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.service.OtpService;
 import com.itsrd.epay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +48,14 @@ public class UserServiceImp implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtHelper jwtHelper;
 
     public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
         this.userRepository = userRepository;
@@ -60,15 +78,24 @@ public class UserServiceImp implements UserService {
 
     }
 
+    private void doAuthenticate(String email, String password) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
+        try {
+            authenticationManager.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException(" Invalid Username or Password  !!");
+        }
+    }
+
     @Override
-    public User saveUser(UserRequest userRequest) {
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
 
-        checkIfUserExist(userRequest.getPhoneNo());
+        checkIfUserExist(createUserRequest.getPhoneNo());
 
-        userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
-        User user = new User(userRequest);
-        Address address = new Address(userRequest);
+        User user = new User(createUserRequest);
+        Address address = new Address(createUserRequest);
         Wallet wallet = new Wallet();
 
         walletRepository.save(wallet);
@@ -79,39 +106,61 @@ public class UserServiceImp implements UserService {
 
         userRepository.save(user);
 
-        otpService.generateOtp(userRequest.getPhoneNo());
+        otpService.generateOtp(createUserRequest.getPhoneNo());
 
-        return user;
+        return new CreateUserResponse("User Created", HttpStatus.CREATED, true, user);
     }
 
     @Override
-    public User getUserDetails(Principal principal) {
+    public VerifyPhoneNoResponse verifyPhoneNo(VerifyPhoneNoRequest verifyPhoneNoRequest) {
+
+        if (!otpService.verifyOtp(verifyPhoneNoRequest))
+            return new VerifyPhoneNoResponse("Wrong OTP", HttpStatus.NOT_ACCEPTABLE, false);
+
+        Optional<User> user = userRepository.findByPhoneNo(verifyPhoneNoRequest.getPhoneNo());
+
+        if (user.isEmpty())
+            throw new UserNotFoundException("User not found");
+        user.get().setActive(true);
+        userRepository.save(user.get());
+        return new VerifyPhoneNoResponse("Phone no is successful verified", HttpStatus.ACCEPTED, true);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        this.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
+        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(loginRequest.getPhoneNo());
+        String token = this.jwtHelper.generateToken(customUserDetails);
+        return new LoginResponse("Login Successful", HttpStatus.OK, true, token);
+    }
+
+    @Override
+    public GetUserResponse getUserDetails(Principal principal) {
 
         Optional<User> user = userRepository.findByPhoneNo(principal.getName());
 
         if (user.isEmpty())
             throw new UserNotFoundException("User not found");
-        return user.get();
+        return new GetUserResponse("User Found", HttpStatus.OK, true, user.get());
     }
 
 
     @Override
-    public User updateUserDetails(Principal principal, UserRequest userRequest) {
+    public UpdateUserResponse updateUserDetails(Principal principal, UpdateUserRequest updateUserRequest) {
         Optional<User> optionalUser = userRepository.findByPhoneNo(principal.getName());
 
         if (optionalUser.isEmpty())
             throw new UserNotFoundException("User not found");
 
         User user = optionalUser.get();
-        if (userRequest.getPassword() == null)
-            userRequest.setPassword(user.getPassword());
+        if (updateUserRequest.getPassword() == null)
+            updateUserRequest.setPassword(user.getPassword());
         else
-            userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            updateUserRequest.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
 
-        User newUser = new User(userRequest);
-        Address address = new Address(userRequest);
+        User newUser = new User(updateUserRequest);
+        Address address = new Address(updateUserRequest);
 
-        newUser.setActive(true);
         newUser.setId(user.getId());
         newUser.setAddress_id(user.getAddress_id());
         newUser.setWallet_id(user.getWallet_id());
@@ -121,11 +170,11 @@ public class UserServiceImp implements UserService {
         addressRepository.save(address);
         userRepository.save(newUser);
 
-        return newUser;
+        return new UpdateUserResponse("User Detail has been updated", HttpStatus.ACCEPTED, true, newUser);
     }
 
     @Override
-    public String deleteUser(Principal principal) {
+    public DeleteUserResponse deleteUser(Principal principal) {
         Optional<User> user = userRepository.findByPhoneNo(principal.getName());
 
         if (user.isEmpty())
@@ -139,7 +188,8 @@ public class UserServiceImp implements UserService {
         walletRepository.deleteById(walletId);
         userRepository.deleteById(userId);
 
-        return "User having Phone no: " + principal.getName() + " has been deleted!";
+        return new DeleteUserResponse("User having Phone no: " + principal.getName() + " has been deleted!", HttpStatus.OK, true);
+//        return "User having Phone no: " + principal.getName() + " has been deleted!";
     }
 
     @Override
@@ -154,19 +204,4 @@ public class UserServiceImp implements UserService {
     }
 
 
-    @Override
-    public String verifyPhoneNo(VerifyPhoneNoRequest verifyPhoneNoRequest) {
-
-//        Customize
-        if (!otpService.verifyOtp(verifyPhoneNoRequest))
-            throw new RuntimeException("Wrong OTP");
-
-        Optional<User> user = userRepository.findByPhoneNo(verifyPhoneNoRequest.getPhoneNo());
-
-        if (user.isEmpty())
-            throw new RuntimeException("verifyPhoneNo runtime error");
-        user.get().setActive(true);
-        userRepository.save(user.get());
-        return "Phone no is successful verified";
-    }
 }

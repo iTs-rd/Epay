@@ -1,8 +1,8 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.dto.DepositMoneyRequest;
-import com.itsrd.epay.dto.TransferMoneyRequest;
-import com.itsrd.epay.dto.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.requests.DepositMoneyRequest;
+import com.itsrd.epay.dto.requests.TransferMoneyRequest;
+import com.itsrd.epay.dto.requests.WithdrawMoneyRequest;
 import com.itsrd.epay.exception.CanNotTransferMoneyToSelf;
 import com.itsrd.epay.exception.InsufficientBalance;
 import com.itsrd.epay.model.Wallet;

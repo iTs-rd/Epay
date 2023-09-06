@@ -1,4 +1,4 @@
-package com.itsrd.epay.dto;
+package com.itsrd.epay.dto.requests;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

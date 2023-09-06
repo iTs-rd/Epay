@@ -20,15 +20,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(value = CanNotChangePhoneNo.class)
-//    public ResponseEntity<Object> canNotChangePhoneNo(CanNotChangePhoneNo canNotChangePhoneNo) {
-//        Map<String, Object> body = new LinkedHashMap<>();
-//        body.put("timestamp", System.currentTimeMillis());
-//        body.put("message", "Phone Number Can Not Be Changed");
-//        body.put("status", 406);
-//        return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
-//    }
-
     @ExceptionHandler(value = InsufficientBalance.class)
     public ResponseEntity<Object> insufficientBalance(InsufficientBalance insufficientBalance) {
         Map<String, Object> body = new LinkedHashMap<>();

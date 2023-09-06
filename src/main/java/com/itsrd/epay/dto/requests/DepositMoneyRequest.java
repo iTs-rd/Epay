@@ -1,4 +1,4 @@
-package com.itsrd.epay.dto;
+package com.itsrd.epay.dto.requests;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WithdrawMoneyRequest {
+public class DepositMoneyRequest {
 
     @NotNull
     @Min(value = 1)

@@ -1,17 +1,11 @@
-package com.itsrd.epay.dto;
+package com.itsrd.epay.dto.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class UserRequest {
 
     private final String firstNameMessage = "First Name Should be between 1 to 256 characters";

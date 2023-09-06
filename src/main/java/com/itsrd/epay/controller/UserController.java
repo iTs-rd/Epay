@@ -1,23 +1,21 @@
 package com.itsrd.epay.controller;
 
 
-import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
-import com.itsrd.epay.dto.LoginRequest;
-import com.itsrd.epay.dto.UserRequest;
-import com.itsrd.epay.dto.VerifyPhoneNoRequest;
-import com.itsrd.epay.exception.PasswordRequired;
+import com.itsrd.epay.dto.requests.CreateUserRequest;
+import com.itsrd.epay.dto.requests.LoginRequest;
+import com.itsrd.epay.dto.requests.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.*;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.jwtSecurity.JwtHelper;
-import com.itsrd.epay.model.User;
 import com.itsrd.epay.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -40,50 +38,37 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest userRequest) {
-        if (userRequest.getPassword() == null)
-            throw new PasswordRequired();
-        return new ResponseEntity<>(userService.saveUser(userRequest), HttpStatus.CREATED);
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/verify-phoneno")
-    public ResponseEntity<String> verifyPhoneNo(@Valid @RequestBody VerifyPhoneNoRequest verifyPhoneNoRequest) {
-        return new ResponseEntity<>(userService.verifyPhoneNo(verifyPhoneNoRequest), HttpStatus.OK);
+    public ResponseEntity<VerifyPhoneNoResponse> verifyPhoneNo(@Valid @RequestBody VerifyPhoneNoRequest verifyPhoneNoRequest) {
+        VerifyPhoneNoResponse response = userService.verifyPhoneNo(verifyPhoneNoRequest);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStateCode()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        this.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
-        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(loginRequest.getPhoneNo());
-        String token = this.jwtHelper.generateToken(customUserDetails);
-        return new ResponseEntity<>(token, HttpStatus.OK);
-    }
-
-
-    private void doAuthenticate(String email, String password) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            authenticationManager.authenticate(authentication);
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
-        }
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
     }
 
 
     @GetMapping("")
-    public ResponseEntity<User> getUserDetails(Principal principal) throws UserNotFoundException {
+    public ResponseEntity<GetUserResponse> getUserDetails(Principal principal) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserDetails(principal), HttpStatus.OK);
     }
 
 
     @PutMapping("")
-    public ResponseEntity<User> updateUserDetails(Principal principal, @Valid @RequestBody UserRequest userRequest) {
-        return new ResponseEntity<>(userService.updateUserDetails(principal, userRequest), HttpStatus.ACCEPTED);
+    public ResponseEntity<UpdateUserResponse> updateUserDetails(Principal principal, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+        return new ResponseEntity<>(userService.updateUserDetails(principal, updateUserRequest), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<String> deleteUser(Principal principal) {
+    public ResponseEntity<DeleteUserResponse> deleteUser(Principal principal) {
         return new ResponseEntity<>(userService.deleteUser(principal), HttpStatus.ACCEPTED);
     }
+    
 
 }

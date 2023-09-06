@@ -2,7 +2,8 @@ package com.itsrd.epay.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.itsrd.epay.dto.UserRequest;
+import com.itsrd.epay.dto.requests.CreateUserRequest;
+import com.itsrd.epay.dto.requests.UpdateUserRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,16 +47,28 @@ public class User {
     @JsonIgnore
     private Long wallet_id;
 
-    public User(UserRequest userRequest) {
-        this.firstName = userRequest.getFirstName();
-        this.lastName = userRequest.getLastName();
-        this.gender = userRequest.getGender();
-        this.email = userRequest.getEmail();
-        this.phoneNo = userRequest.getPhoneNo();
-        this.password = userRequest.getPassword();
+
+    public User(CreateUserRequest createUserRequest) {
+        this.firstName = createUserRequest.getFirstName();
+        this.lastName = createUserRequest.getLastName();
+        this.gender = createUserRequest.getGender();
+        this.email = createUserRequest.getEmail();
+        this.phoneNo = createUserRequest.getPhoneNo();
+        this.password = createUserRequest.getPassword();
 
         this.roles = "ROLE_USER";
         this.isActive = false;
     }
 
+    public User(UpdateUserRequest updateUserRequest) {
+        this.firstName = updateUserRequest.getFirstName();
+        this.lastName = updateUserRequest.getLastName();
+        this.gender = updateUserRequest.getGender();
+        this.email = updateUserRequest.getEmail();
+        this.phoneNo = updateUserRequest.getPhoneNo();
+        this.password = updateUserRequest.getPassword();
+
+        this.roles = "ROLE_USER";
+        this.isActive = true;
+    }
 }
