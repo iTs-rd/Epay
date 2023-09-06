@@ -1,4 +1,4 @@
-package com.itsrd.epay.Repository;
+package com.itsrd.epay.repository;
 
 import com.itsrd.epay.model.Otp;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.itsrd.epay.configuration;
 
 import com.itsrd.epay.model.User;
-import com.itsrd.epay.Repository.UserRepository;
+import com.itsrd.epay.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,4 +1,4 @@
-package com.itsrd.epay.JWTSecurity;
+package com.itsrd.epay.jwtSecurity;
 
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;

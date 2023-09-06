@@ -1,9 +1,9 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.Repository.OtpRepository;
 import com.itsrd.epay.dto.VerifyPhoneNoRequest;
 import com.itsrd.epay.exception.NoOtpFound;
 import com.itsrd.epay.model.Otp;
+import com.itsrd.epay.repository.OtpRepository;
 import com.itsrd.epay.service.OtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

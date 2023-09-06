@@ -1,8 +1,5 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.Repository.AddressRepository;
-import com.itsrd.epay.Repository.UserRepository;
-import com.itsrd.epay.Repository.WalletRepository;
 import com.itsrd.epay.dto.UserRequest;
 import com.itsrd.epay.dto.VerifyPhoneNoRequest;
 import com.itsrd.epay.exception.UserAlreadyExistsException;
@@ -10,6 +7,9 @@ import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.model.Wallet;
+import com.itsrd.epay.repository.AddressRepository;
+import com.itsrd.epay.repository.UserRepository;
+import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.service.OtpService;
 import com.itsrd.epay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

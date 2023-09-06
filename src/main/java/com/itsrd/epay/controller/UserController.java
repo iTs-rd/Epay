@@ -1,7 +1,6 @@
 package com.itsrd.epay.controller;
 
 
-import com.itsrd.epay.JWTSecurity.JwtHelper;
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
 import com.itsrd.epay.dto.LoginRequest;
@@ -9,10 +8,10 @@ import com.itsrd.epay.dto.UserRequest;
 import com.itsrd.epay.dto.VerifyPhoneNoRequest;
 import com.itsrd.epay.exception.PasswordRequired;
 import com.itsrd.epay.exception.UserNotFoundException;
+import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.service.UserService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,6 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/user")
-@Slf4j
 public class UserController {
 
     @Autowired
