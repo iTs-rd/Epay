@@ -1,9 +1,13 @@
 package com.itsrd.epay.controller;
 
 
-import com.itsrd.epay.dto.requests.DepositMoneyRequest;
-import com.itsrd.epay.dto.requests.TransferMoneyRequest;
-import com.itsrd.epay.dto.requests.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.DepositMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.TransferMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.response.walletResponse.CheckBalanceResponse;
+import com.itsrd.epay.dto.response.walletResponse.DepositMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.TransferMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.WithdrawMoneyResponse;
 import com.itsrd.epay.service.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +29,22 @@ public class WalletController {
 
 
     @PostMapping("/deposit")
-    public ResponseEntity<String> depositMoney(Principal principal, @Valid @RequestBody DepositMoneyRequest depositMoneyRequest) {
+    public ResponseEntity<DepositMoneyResponse> depositMoney(Principal principal, @Valid @RequestBody DepositMoneyRequest depositMoneyRequest) {
         return new ResponseEntity<>(walletService.depositMoney(principal, depositMoneyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/withdrawal")
-    public ResponseEntity<String> withdrawalMoney(Principal principal, @Valid @RequestBody WithdrawMoneyRequest withdrawMoneyRequest) {
+    public ResponseEntity<WithdrawMoneyResponse> withdrawalMoney(Principal principal, @Valid @RequestBody WithdrawMoneyRequest withdrawMoneyRequest) {
         return new ResponseEntity<>(walletService.withdrawMoney(principal, withdrawMoneyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<String> transferMoney(Principal principal, @Valid @RequestBody TransferMoneyRequest transferMoneyRequest) {
+    public ResponseEntity<TransferMoneyResponse> transferMoney(Principal principal, @Valid @RequestBody TransferMoneyRequest transferMoneyRequest) {
         return new ResponseEntity<>(walletService.transferMoney(principal, transferMoneyRequest), HttpStatus.OK);
     }
 
     @GetMapping("/checkbalance")
-    public ResponseEntity<String> checkBalance(Principal principal) {
+    public ResponseEntity<CheckBalanceResponse> checkBalance(Principal principal) {
 //        Long userId = Long.valueOf(id);
         return new ResponseEntity<>(walletService.checkBalance(principal), HttpStatus.OK);
     }

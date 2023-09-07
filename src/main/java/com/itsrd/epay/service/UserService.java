@@ -1,10 +1,10 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.dto.requests.CreateUserRequest;
-import com.itsrd.epay.dto.requests.LoginRequest;
-import com.itsrd.epay.dto.requests.UpdateUserRequest;
-import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
-import com.itsrd.epay.dto.response.*;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
 
 import java.security.Principal;

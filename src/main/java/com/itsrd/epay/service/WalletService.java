@@ -1,17 +1,21 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.dto.requests.DepositMoneyRequest;
-import com.itsrd.epay.dto.requests.TransferMoneyRequest;
-import com.itsrd.epay.dto.requests.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.DepositMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.TransferMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.response.walletResponse.CheckBalanceResponse;
+import com.itsrd.epay.dto.response.walletResponse.DepositMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.TransferMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.WithdrawMoneyResponse;
 
 import java.security.Principal;
 
 public interface WalletService {
-    String depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest);
+    DepositMoneyResponse depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest);
 
-    String withdrawMoney(Principal principal, WithdrawMoneyRequest withdrawMoneyRequest);
+    WithdrawMoneyResponse withdrawMoney(Principal principal, WithdrawMoneyRequest withdrawMoneyRequest);
 
-    String checkBalance(Principal principal);
+    TransferMoneyResponse transferMoney(Principal principal, TransferMoneyRequest transferMoneyRequest);
 
-    String transferMoney(Principal principal, TransferMoneyRequest transferMoneyRequest);
+    CheckBalanceResponse checkBalance(Principal principal);
 }

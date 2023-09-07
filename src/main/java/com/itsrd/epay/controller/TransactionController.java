@@ -1,6 +1,6 @@
 package com.itsrd.epay.controller;
 
-import com.itsrd.epay.model.Transaction;
+import com.itsrd.epay.dto.response.transactionResponse.GetStatementByUserRespone;
 import com.itsrd.epay.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping("")
-    public ResponseEntity<Iterable<Transaction>> getByUser(Principal principal, @RequestParam Integer pageNumber) {
-        return new ResponseEntity<>(transactionService.getStatement(principal, pageNumber), HttpStatus.OK);
+    public ResponseEntity<GetStatementByUserRespone> getStatementByUser(Principal principal, @RequestParam Integer pageNumber) {
+        return new ResponseEntity<>(transactionService.getStatementByUser(principal, pageNumber), HttpStatus.OK);
     }
 }

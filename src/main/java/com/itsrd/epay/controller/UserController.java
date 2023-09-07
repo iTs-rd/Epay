@@ -2,11 +2,11 @@ package com.itsrd.epay.controller;
 
 
 import com.itsrd.epay.configuration.CustomUserDetailsService;
-import com.itsrd.epay.dto.requests.CreateUserRequest;
-import com.itsrd.epay.dto.requests.LoginRequest;
-import com.itsrd.epay.dto.requests.UpdateUserRequest;
-import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
-import com.itsrd.epay.dto.response.*;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.service.UserService;
@@ -69,6 +69,6 @@ public class UserController {
     public ResponseEntity<DeleteUserResponse> deleteUser(Principal principal) {
         return new ResponseEntity<>(userService.deleteUser(principal), HttpStatus.ACCEPTED);
     }
-    
+
 
 }

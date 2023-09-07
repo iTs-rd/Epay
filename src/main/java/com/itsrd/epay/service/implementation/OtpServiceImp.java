@@ -1,6 +1,6 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.exception.NoOtpFound;
 import com.itsrd.epay.model.Otp;
 import com.itsrd.epay.repository.OtpRepository;

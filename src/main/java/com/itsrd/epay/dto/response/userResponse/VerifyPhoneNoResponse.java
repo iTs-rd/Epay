@@ -1,5 +1,6 @@
-package com.itsrd.epay.dto.response;
+package com.itsrd.epay.dto.response.userResponse;
 
+import com.itsrd.epay.dto.response.GlobalResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -7,8 +8,6 @@ import org.springframework.http.HttpStatus;
 public class VerifyPhoneNoResponse extends GlobalResponse {
 
     public VerifyPhoneNoResponse(String message, HttpStatus stateCode, boolean success) {
-        this.message = message;
-        this.stateCode = stateCode.value();
-        this.success = success;
+        super(message, success, stateCode);
     }
 }

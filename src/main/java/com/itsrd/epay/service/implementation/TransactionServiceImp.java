@@ -1,13 +1,16 @@
 package com.itsrd.epay.service.implementation;
 
+import com.itsrd.epay.dto.response.transactionResponse.GetStatementByUserRespone;
 import com.itsrd.epay.model.Transaction;
 import com.itsrd.epay.repository.TransactionRepository;
 import com.itsrd.epay.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -28,8 +31,11 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     @Override
-    public Iterable<Transaction> getStatement(Principal principal, int pageNumber) {
+    public GetStatementByUserRespone getStatementByUser(Principal principal, int pageNumber) {
         Pageable page = PageRequest.of(pageNumber, pageSize, Sort.Direction.DESC, "createdAt");
-        return transactionRepository.findByRemitterPhoneNo(principal.getName(), page);
+
+        Page<Transaction> transaction = transactionRepository.findByRemitterPhoneNo(principal.getName(), page);
+//        transaction.getContent()
+        return new GetStatementByUserRespone(transaction.getContent(), transaction.getPageable().getPageNumber(), transaction.getTotalPages(), "Statement Generated, Recent transaction appear on top", true, HttpStatus.OK);
     }
 }

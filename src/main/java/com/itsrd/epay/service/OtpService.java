@@ -1,6 +1,6 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 
 public interface OtpService {
 

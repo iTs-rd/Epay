@@ -1,8 +1,8 @@
 package com.itsrd.epay.model;
 
 
-import com.itsrd.epay.dto.requests.CreateUserRequest;
-import com.itsrd.epay.dto.requests.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

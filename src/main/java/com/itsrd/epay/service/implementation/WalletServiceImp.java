@@ -1,8 +1,12 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.dto.requests.DepositMoneyRequest;
-import com.itsrd.epay.dto.requests.TransferMoneyRequest;
-import com.itsrd.epay.dto.requests.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.DepositMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.TransferMoneyRequest;
+import com.itsrd.epay.dto.requests.walletRequest.WithdrawMoneyRequest;
+import com.itsrd.epay.dto.response.walletResponse.CheckBalanceResponse;
+import com.itsrd.epay.dto.response.walletResponse.DepositMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.TransferMoneyResponse;
+import com.itsrd.epay.dto.response.walletResponse.WithdrawMoneyResponse;
 import com.itsrd.epay.exception.CanNotTransferMoneyToSelf;
 import com.itsrd.epay.exception.InsufficientBalance;
 import com.itsrd.epay.model.Wallet;
@@ -11,6 +15,7 @@ import com.itsrd.epay.service.TransactionService;
 import com.itsrd.epay.service.UserService;
 import com.itsrd.epay.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,22 +92,24 @@ public class WalletServiceImp implements WalletService {
     }
 
     @Override
-    public String depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest) {
+    public DepositMoneyResponse depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest) {
         Long walletId = userService.getWalletIdFromPhoneNo(principal.getName());
         addMoneyToWallet(walletId, depositMoneyRequest.getAmount());
-        return recordDeposit(principal.getName(), depositMoneyRequest.getAmount(), depositMoneyRequest.getRemark());
+        String message = recordDeposit(principal.getName(), depositMoneyRequest.getAmount(), depositMoneyRequest.getRemark());
+        return new DepositMoneyResponse(message, true, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public String withdrawMoney(Principal principal, WithdrawMoneyRequest withdrawMoneyRequest) {
+    public WithdrawMoneyResponse withdrawMoney(Principal principal, WithdrawMoneyRequest withdrawMoneyRequest) {
         Long walletId = userService.getWalletIdFromPhoneNo(principal.getName());
         withdrawMoneyFromWallet(walletId, withdrawMoneyRequest.getAmount());
-        return recordWithdrawal(principal.getName(), withdrawMoneyRequest.getAmount(), withdrawMoneyRequest.getRemark());
+        String message = recordWithdrawal(principal.getName(), withdrawMoneyRequest.getAmount(), withdrawMoneyRequest.getRemark());
+        return new WithdrawMoneyResponse(message, true, HttpStatus.ACCEPTED);
     }
 
     @Override
     @Transactional
-    public String transferMoney(Principal principal, TransferMoneyRequest transferMoneyRequest) {
+    public TransferMoneyResponse transferMoney(Principal principal, TransferMoneyRequest transferMoneyRequest) {
         checkForSelfTransfer(principal.getName(), transferMoneyRequest.getBeneficiaryPhoneNo());
 
         Long remitterWalletId = userService.getWalletIdFromPhoneNo(principal.getName());
@@ -111,17 +118,19 @@ public class WalletServiceImp implements WalletService {
         withdrawMoneyFromWallet(remitterWalletId, transferMoneyRequest.getAmount());
         addMoneyToWallet(beneficiaryWalletId, transferMoneyRequest.getAmount());
 
-        return recordTransfer(principal.getName(), transferMoneyRequest.getBeneficiaryPhoneNo(), transferMoneyRequest.getAmount(), transferMoneyRequest.getRemark());
+        String message = recordTransfer(principal.getName(), transferMoneyRequest.getBeneficiaryPhoneNo(), transferMoneyRequest.getAmount(), transferMoneyRequest.getRemark());
+        return new TransferMoneyResponse(message, true, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public String checkBalance(Principal principal) {
+    public CheckBalanceResponse checkBalance(Principal principal) {
         Long walletId = userService.getWalletIdFromPhoneNo(principal.getName());
 
         Optional<Wallet> wallet = walletRepository.findById(walletId);
         if (wallet.isEmpty())
             throw new RuntimeException("Wallet Not Found!");
 
-        return "Your current Wallet Balance is " + wallet.get().getAmount();
+        String message = "Your current Wallet Balance is " + wallet.get().getAmount();
+        return new CheckBalanceResponse(message, true, HttpStatus.OK);
     }
 }

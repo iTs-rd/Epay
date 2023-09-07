@@ -1,4 +1,4 @@
-package com.itsrd.epay.dto.requests;
+package com.itsrd.epay.dto.requests.userRequest;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserRequest {
+public class CreateUserRequest {
 
     private final String firstNameMessage = "First Name Should be between 1 to 256 characters";
     private final String lastNameMessage = "Last Name Should be between 1 to 256 characters";
@@ -26,6 +26,7 @@ public class UserRequest {
     @Size(min = 10, max = 10, message = phoneNoMessage)
     private String phoneNo;
 
+    @NotNull
     @Size(min = 4, max = 256)
     private String password;
 

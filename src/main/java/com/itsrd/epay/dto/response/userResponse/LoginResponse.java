@@ -1,5 +1,6 @@
-package com.itsrd.epay.dto.response;
+package com.itsrd.epay.dto.response.userResponse;
 
+import com.itsrd.epay.dto.response.GlobalResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -8,9 +9,7 @@ public class LoginResponse extends GlobalResponse {
     private String token;
 
     public LoginResponse(String message, HttpStatus stateCode, boolean success, String token) {
-        this.message = message;
-        this.stateCode = stateCode.value();
-        this.success = success;
+        super(message, success, stateCode);
         this.token = token;
     }
 }

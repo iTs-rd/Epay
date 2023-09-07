@@ -2,11 +2,11 @@ package com.itsrd.epay.service.implementation;
 
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
-import com.itsrd.epay.dto.requests.CreateUserRequest;
-import com.itsrd.epay.dto.requests.LoginRequest;
-import com.itsrd.epay.dto.requests.UpdateUserRequest;
-import com.itsrd.epay.dto.requests.VerifyPhoneNoRequest;
-import com.itsrd.epay.dto.response.*;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserAlreadyExistsException;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.jwtSecurity.JwtHelper;
@@ -108,7 +108,7 @@ public class UserServiceImp implements UserService {
 
         otpService.generateOtp(createUserRequest.getPhoneNo());
 
-        return new CreateUserResponse("User Created", HttpStatus.CREATED, true, user);
+        return new CreateUserResponse(user, "User Created", true, HttpStatus.CREATED);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class UserServiceImp implements UserService {
             throw new UserNotFoundException("User not found");
         user.get().setActive(true);
         userRepository.save(user.get());
-        return new VerifyPhoneNoResponse("Phone no is successful verified", HttpStatus.ACCEPTED, true);
+        return new VerifyPhoneNoResponse("PhoneNo is successful verified", HttpStatus.ACCEPTED, true);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class UserServiceImp implements UserService {
 
         if (user.isEmpty())
             throw new UserNotFoundException("User not found");
-        return new GetUserResponse("User Found", HttpStatus.OK, true, user.get());
+        return new GetUserResponse(user.get(), "User Found", true, HttpStatus.OK);
     }
 
 
@@ -170,7 +170,7 @@ public class UserServiceImp implements UserService {
         addressRepository.save(address);
         userRepository.save(newUser);
 
-        return new UpdateUserResponse("User Detail has been updated", HttpStatus.ACCEPTED, true, newUser);
+        return new UpdateUserResponse(newUser, "User Detail has been updated", true, HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -189,7 +189,6 @@ public class UserServiceImp implements UserService {
         userRepository.deleteById(userId);
 
         return new DeleteUserResponse("User having Phone no: " + principal.getName() + " has been deleted!", HttpStatus.OK, true);
-//        return "User having Phone no: " + principal.getName() + " has been deleted!";
     }
 
     @Override

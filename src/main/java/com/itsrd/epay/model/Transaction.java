@@ -1,6 +1,7 @@
 package com.itsrd.epay.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Document(indexName = "transaction")
 public class Transaction {
 
+    @JsonIgnore
     private String id;
 
     @NotNull
