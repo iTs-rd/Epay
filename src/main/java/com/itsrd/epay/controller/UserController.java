@@ -1,15 +1,24 @@
 package com.itsrd.epay.controller;
 
 
+import com.itsrd.epay.configuration.CustomUserDetailsService;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
-import com.itsrd.epay.model.User;
-import com.itsrd.epay.request.UserRequest;
+import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @RestController
@@ -17,30 +26,49 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtHelper jwtHelper;
+
+    @Autowired
     private UserService userService;
 
-    @GetMapping("/profile")
-    public ResponseEntity<User> getUser(@RequestParam Long id) throws UserNotFoundException {
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
+    @PostMapping("/signup")
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<User> saveUser(@Valid @RequestBody UserRequest userRequest) {
-        return new ResponseEntity<>(userService.saveUser(userRequest), HttpStatus.CREATED);
+    @PostMapping("/verify-phoneno")
+    public ResponseEntity<VerifyPhoneNoResponse> verifyPhoneNo(@Valid @RequestBody VerifyPhoneNoRequest verifyPhoneNoRequest) {
+        VerifyPhoneNoResponse response = userService.verifyPhoneNo(verifyPhoneNoRequest);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStateCode()));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
-        return new ResponseEntity<>(userService.updateUser(id, userRequest), HttpStatus.ACCEPTED);
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.ACCEPTED);
+
+    @GetMapping("")
+    public ResponseEntity<GetUserResponse> getUserDetails(Principal principal) throws UserNotFoundException {
+        return new ResponseEntity<>(userService.getUserDetails(principal), HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<User> test(@RequestParam String phoneNo) {
-        return new ResponseEntity<>(userService.test(phoneNo), HttpStatus.OK);
+
+    @PutMapping("")
+    public ResponseEntity<UpdateUserResponse> updateUserDetails(Principal principal, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+        return new ResponseEntity<>(userService.updateUserDetails(principal, updateUserRequest), HttpStatus.ACCEPTED);
     }
+
+    @DeleteMapping("")
+    public ResponseEntity<DeleteUserResponse> deleteUser(Principal principal) {
+        return new ResponseEntity<>(userService.deleteUser(principal), HttpStatus.ACCEPTED);
+    }
+
+
 }

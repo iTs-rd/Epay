@@ -1,9 +1,14 @@
 package com.itsrd.epay.model;
 
 
-import com.itsrd.epay.request.UserRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -27,16 +32,43 @@ public class User {
 
     private String gender;
 
+    @JsonIgnore
+    private String password;
+
+    @JsonIgnore
+    private boolean isActive;
+
+    @JsonIgnore
+    private String roles;
+
+    @JsonIgnore
     private Long address_id;
 
+    @JsonIgnore
     private Long wallet_id;
 
-    public User(UserRequest userRequest) {
-        this.firstName = userRequest.getFirstName();
-        this.lastName = userRequest.getLastName();
-        this.gender = userRequest.getGender();
-        this.email = userRequest.getEmail();
-        this.phoneNo = userRequest.getPhoneNo();
+
+    public User(CreateUserRequest createUserRequest) {
+        this.firstName = createUserRequest.getFirstName();
+        this.lastName = createUserRequest.getLastName();
+        this.gender = createUserRequest.getGender();
+        this.email = createUserRequest.getEmail();
+        this.phoneNo = createUserRequest.getPhoneNo();
+        this.password = createUserRequest.getPassword();
+
+        this.roles = "ROLE_USER";
+        this.isActive = false;
     }
 
+    public User(UpdateUserRequest updateUserRequest) {
+        this.firstName = updateUserRequest.getFirstName();
+        this.lastName = updateUserRequest.getLastName();
+        this.gender = updateUserRequest.getGender();
+        this.email = updateUserRequest.getEmail();
+        this.phoneNo = updateUserRequest.getPhoneNo();
+        this.password = updateUserRequest.getPassword();
+
+        this.roles = "ROLE_USER";
+        this.isActive = true;
+    }
 }

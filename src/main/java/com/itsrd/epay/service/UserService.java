@@ -1,20 +1,27 @@
 package com.itsrd.epay.service;
 
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
-import com.itsrd.epay.model.User;
-import com.itsrd.epay.request.UserRequest;
+
+import java.security.Principal;
 
 public interface UserService {
 
-    User getUser(Long id) throws UserNotFoundException;
+    CreateUserResponse createUser(CreateUserRequest createUserRequest);
 
-    User saveUser(UserRequest userRequest);
+    VerifyPhoneNoResponse verifyPhoneNo(VerifyPhoneNoRequest verifyPhoneNoRequest);
 
-    User updateUser(Long id, UserRequest userRequest);
+    LoginResponse login(LoginRequest loginRequest);
 
-    String deleteUser(Long id);
+    GetUserResponse getUserDetails(Principal principal) throws UserNotFoundException;
 
-    Long getWalletIdFromUserId(Long user_id);
+    UpdateUserResponse updateUserDetails(Principal principal, UpdateUserRequest updateUserRequest);
 
-    User test(String phoneNo);
+    DeleteUserResponse deleteUser(Principal principal);
+
+    Long getWalletIdFromPhoneNo(String phoneNo);
 }

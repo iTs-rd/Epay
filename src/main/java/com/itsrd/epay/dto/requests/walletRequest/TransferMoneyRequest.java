@@ -1,15 +1,14 @@
-package com.itsrd.epay.request;
+package com.itsrd.epay.dto.requests.walletRequest;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class TransferMoneyRequest {
-    @NotNull
-    private Long remitterUserId;
 
     @NotNull
     @Min(value = 1)
@@ -18,5 +17,6 @@ public class TransferMoneyRequest {
     private String remark;
 
     @NotNull
-    private Long beneficiaryUserId;
+    @Size(min = 10, max = 10)
+    private String beneficiaryPhoneNo;
 }

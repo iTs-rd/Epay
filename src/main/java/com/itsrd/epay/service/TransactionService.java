@@ -1,10 +1,12 @@
 package com.itsrd.epay.service;
 
-import com.itsrd.epay.model.Transaction;
+import com.itsrd.epay.dto.response.transactionResponse.GetStatementByUserRespone;
+
+import java.security.Principal;
 
 public interface TransactionService {
-    void addRecord(Long remitterUserId, String type, Double amount, String description, String remark);
+    void addRecord(String remitterPhoneNo, String type, Double amount, String description, String remark);
 
-    Iterable<Transaction> getStatement(Long id, int pageNumber);
+    GetStatementByUserRespone getStatementByUser(Principal principal, int pageNumber);
 
 }

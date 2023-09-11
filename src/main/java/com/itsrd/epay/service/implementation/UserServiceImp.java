@@ -1,20 +1,32 @@
 package com.itsrd.epay.service.implementation;
 
-import com.itsrd.epay.exception.CanNotChangePhoneNo;
+import com.itsrd.epay.configuration.CustomUserDetails;
+import com.itsrd.epay.configuration.CustomUserDetailsService;
+import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
+import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
+import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
+import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserAlreadyExistsException;
 import com.itsrd.epay.exception.UserNotFoundException;
+import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.model.Wallet;
 import com.itsrd.epay.repository.AddressRepository;
 import com.itsrd.epay.repository.UserRepository;
 import com.itsrd.epay.repository.WalletRepository;
-import com.itsrd.epay.request.UserRequest;
+import com.itsrd.epay.service.OtpService;
 import com.itsrd.epay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.security.Principal;
 import java.util.Optional;
 
 
@@ -30,6 +42,21 @@ public class UserServiceImp implements UserService {
     @Autowired
     private WalletRepository walletRepository;
 
+    @Autowired
+    private OtpService otpService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtHelper jwtHelper;
+
     public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
@@ -37,18 +64,38 @@ public class UserServiceImp implements UserService {
     }
 
     private void checkIfUserExist(String phoneNo) {
-        if (userRepository.findByPhoneNo(phoneNo) != null)
+        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
+
+        if (user.isEmpty())
+            return;
+
+        if (user.get().isActive())
             throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
+
+        otpService.generateOtp(phoneNo);
+
+        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
 
     }
 
+    private void doAuthenticate(String email, String password) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
+        try {
+            authenticationManager.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException(" Invalid Username or Password  !!");
+        }
+    }
+
     @Override
-    public User saveUser(UserRequest userRequest) {
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
 
-        checkIfUserExist(userRequest.getPhoneNo());
+        checkIfUserExist(createUserRequest.getPhoneNo());
 
-        User user = new User(userRequest);
-        Address address = new Address(userRequest);
+        createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
+
+        User user = new User(createUserRequest);
+        Address address = new Address(createUserRequest);
         Wallet wallet = new Wallet();
 
         walletRepository.save(wallet);
@@ -59,83 +106,101 @@ public class UserServiceImp implements UserService {
 
         userRepository.save(user);
 
-        return user;
+        otpService.generateOtp(createUserRequest.getPhoneNo());
+
+        return new CreateUserResponse(user, "User Created", true, HttpStatus.CREATED);
     }
 
     @Override
-    public User getUser(Long id) {
-        Optional<User> user = userRepository.findById(id);
+    public VerifyPhoneNoResponse verifyPhoneNo(VerifyPhoneNoRequest verifyPhoneNoRequest) {
+
+        if (!otpService.verifyOtp(verifyPhoneNoRequest))
+            return new VerifyPhoneNoResponse("Wrong OTP", HttpStatus.NOT_ACCEPTABLE, false);
+
+        Optional<User> user = userRepository.findByPhoneNo(verifyPhoneNoRequest.getPhoneNo());
+
         if (user.isEmpty())
-            throw new UserNotFoundException("User not found for the id: " + id);
-        return user.get();
+            throw new UserNotFoundException("User not found");
+        user.get().setActive(true);
+        userRepository.save(user.get());
+        return new VerifyPhoneNoResponse("PhoneNo is successful verified", HttpStatus.ACCEPTED, true);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        this.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
+        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(loginRequest.getPhoneNo());
+        String token = this.jwtHelper.generateToken(customUserDetails);
+        return new LoginResponse("Login Successful", HttpStatus.OK, true, token);
+    }
+
+    @Override
+    public GetUserResponse getUserDetails(Principal principal) {
+
+        Optional<User> user = userRepository.findByPhoneNo(principal.getName());
+
+        if (user.isEmpty())
+            throw new UserNotFoundException("User not found");
+        return new GetUserResponse(user.get(), "User Found", true, HttpStatus.OK);
     }
 
 
     @Override
-    public User updateUser(Long id, UserRequest userRequest) {
-        Optional<User> oldData = userRepository.findById(id);
+    public UpdateUserResponse updateUserDetails(Principal principal, UpdateUserRequest updateUserRequest) {
+        Optional<User> optionalUser = userRepository.findByPhoneNo(principal.getName());
 
-        if (oldData.isEmpty())
-            throw new UserNotFoundException("User not found for the id: " + id);
+        if (optionalUser.isEmpty())
+            throw new UserNotFoundException("User not found");
 
-        if (!Objects.equals(oldData.get().getPhoneNo(), userRequest.getPhoneNo()))
-            throw new CanNotChangePhoneNo();
+        User user = optionalUser.get();
+        if (updateUserRequest.getPassword() == null)
+            updateUserRequest.setPassword(user.getPassword());
+        else
+            updateUserRequest.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
 
-        User user = new User(userRequest);
-        Address address = new Address(userRequest);
+        User newUser = new User(updateUserRequest);
+        Address address = new Address(updateUserRequest);
 
-        Long address_id = oldData.get().getAddress_id();
-        Long wallet_id = oldData.get().getWallet_id();
+        newUser.setId(user.getId());
+        newUser.setAddress_id(user.getAddress_id());
+        newUser.setWallet_id(user.getWallet_id());
 
-        user.setId(id);
-        user.setAddress_id(address_id);
-        user.setWallet_id(wallet_id);
-
-        address.setId(address_id);
+        address.setId(user.getAddress_id());
 
         addressRepository.save(address);
-        userRepository.save(user);
+        userRepository.save(newUser);
 
-        return user;
+        return new UpdateUserResponse(newUser, "User Detail has been updated", true, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public String deleteUser(Long id) {
-        Optional<User> user = userRepository.findById(id);
+    public DeleteUserResponse deleteUser(Principal principal) {
+        Optional<User> user = userRepository.findByPhoneNo(principal.getName());
 
         if (user.isEmpty())
-            throw new UserNotFoundException("User not found for the id: " + id);
+            throw new UserNotFoundException("User not found");
 
-        Long address_id = user.get().getAddress_id();
-        Long wallet_id = user.get().getWallet_id();
+        long userId = user.get().getId();
+        Long addressId = user.get().getAddress_id();
+        Long walletId = user.get().getWallet_id();
 
-        addressRepository.deleteById(address_id);
-        walletRepository.deleteById(wallet_id);
-        userRepository.deleteById(id);
+        addressRepository.deleteById(addressId);
+        walletRepository.deleteById(walletId);
+        userRepository.deleteById(userId);
 
-        return "User having userId: " + id + " has been deleted!";
+        return new DeleteUserResponse("User having Phone no: " + principal.getName() + " has been deleted!", HttpStatus.OK, true);
     }
 
     @Override
-    public Long getWalletIdFromUserId(Long user_id) {
-        Optional<User> user = userRepository.findById(user_id);
+    public Long getWalletIdFromPhoneNo(String phoneNo) {
+        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
 
         if (user.isEmpty())
-            throw new UserNotFoundException("User not found for the id: " + user_id);
+            throw new UserNotFoundException("User not found for the Phone No: " + phoneNo);
 
         return user.get().getWallet_id();
 
     }
 
-    @Override
-    public User test(String phoneNo) {
 
-
-//        if(oldData.get().getPhoneNo() != userRequest.getPhoneNo())
-        throw new CanNotChangePhoneNo();
-//        if(userRepository.findByPhoneNo(phoneNo)!=null)
-//            System.out.println("hiii");
-//
-//        return userRepository.findByPhoneNo(phoneNo);
-    }
 }

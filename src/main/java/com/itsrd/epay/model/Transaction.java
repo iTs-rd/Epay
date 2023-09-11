@@ -1,6 +1,7 @@
 package com.itsrd.epay.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,10 +14,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Document(indexName = "transaction")
 public class Transaction {
 
+    @JsonIgnore
     private String id;
 
     @NotNull
-    private Long remitterUserId;
+    private String remitterPhoneNo;
 
     @NotNull
     private String type;
@@ -31,8 +33,8 @@ public class Transaction {
 
     private java.util.Date createdAt;
 
-    public Transaction(Long remitterUserId, String type, Double amount, String description, String remark) {
-        this.remitterUserId = remitterUserId;
+    public Transaction(String remitterPhoneNo, String type, Double amount, String description, String remark) {
+        this.remitterPhoneNo = remitterPhoneNo;
         this.type = type;
         this.amount = amount;
         this.description = description;

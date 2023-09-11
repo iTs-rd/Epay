@@ -10,29 +10,41 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = CanNotChangePhoneNo.class)
-    public ResponseEntity<Object> canNotChangePhoneNo(CanNotChangePhoneNo canNotChangePhoneNo) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", System.currentTimeMillis());
-        body.put("message", "Phone Number Can Not Be Changed");
-        body.put("status", 406);
-        return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
-    }
-
     @ExceptionHandler(value = InsufficientBalance.class)
     public ResponseEntity<Object> insufficientBalance(InsufficientBalance insufficientBalance) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
         body.put("message", "Insufficient Balance!");
-        body.put("status", 406);
+        body.put("status", HttpStatus.NOT_ACCEPTABLE.value());
         return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(value = NoOtpFound.class)
+    public ResponseEntity<Object> noOtpFound(NoOtpFound noOtpFound) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", System.currentTimeMillis());
+        body.put("message", noOtpFound.getMessage());
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = PasswordRequired.class)
+    public ResponseEntity<Object> passwordRequired(PasswordRequired passwordRequired) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", System.currentTimeMillis());
+        body.put("message", "Password is Required");
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = CanNotTransferMoneyToSelf.class)
@@ -40,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
         body.put("message", "You can not tansfer money to yourself!");
-        body.put("status", 406);
+        body.put("status", HttpStatus.NOT_ACCEPTABLE.value());
         return new ResponseEntity<>(body, HttpStatus.NOT_ACCEPTABLE);
     }
 
@@ -49,7 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
         body.put("message", userNotFoundException.getMessage());
-        body.put("status", 404);
+        body.put("status", HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
@@ -58,7 +70,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", System.currentTimeMillis());
         body.put("message", userAlreadyExistsException.getMessage());
-        body.put("status", 409);
+        body.put("status", HttpStatus.CONFLICT.value());
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
