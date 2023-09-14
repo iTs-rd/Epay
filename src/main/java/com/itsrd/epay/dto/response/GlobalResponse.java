@@ -11,21 +11,16 @@ public class GlobalResponse {
     public String message;
     public boolean success;
     public int stateCode;
-    public LocalDateTime timestamp;
+    public String timestamp;
     public ZoneId timeZone;
 
     public GlobalResponse(String message, boolean success, HttpStatus stateCode) {
         this.success = success;
         this.message = message;
         this.stateCode = stateCode.value();
-
         this.timeZone = ZoneId.systemDefault();
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = String.valueOf(LocalDateTime.now());
     }
 
-    public GlobalResponse() {
-        this.timeZone = ZoneId.systemDefault();
-        this.timestamp = LocalDateTime.now();
-    }
 
 }

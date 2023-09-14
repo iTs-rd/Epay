@@ -2,9 +2,13 @@ package com.itsrd.epay.dto.requests.userRequest;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class VerifyPhoneNoRequest {
 
     private final String phoneNoMessage = "Phone no Should be of 10 digit";

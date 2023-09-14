@@ -35,7 +35,6 @@ public class TransactionServiceImp implements TransactionService {
         Pageable page = PageRequest.of(pageNumber, pageSize, Sort.Direction.DESC, "createdAt");
 
         Page<Transaction> transaction = transactionRepository.findByRemitterPhoneNo(principal.getName(), page);
-//        transaction.getContent()
         return new GetStatementByUserRespone(transaction.getContent(), transaction.getPageable().getPageNumber(), transaction.getTotalPages(), "Statement Generated, Recent transaction appear on top", true, HttpStatus.OK);
     }
 }
