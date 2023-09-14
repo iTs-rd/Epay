@@ -7,7 +7,6 @@ import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
 import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.dto.response.userResponse.*;
-import com.itsrd.epay.exception.UserAlreadyExistsException;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.Address;
@@ -18,11 +17,10 @@ import com.itsrd.epay.repository.UserRepository;
 import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.service.OtpService;
 import com.itsrd.epay.service.UserService;
-import com.itsrd.epay.utils.CommanUtils;
+import com.itsrd.epay.utils.UserServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +51,7 @@ public class UserServiceImp implements UserService {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private CommanUtils commanUtils;
+    private UserServiceUtils userServiceUtils;
 
     @Autowired
     private JwtHelper jwtHelper;
@@ -64,25 +62,25 @@ public class UserServiceImp implements UserService {
 //        this.walletRepository = walletRepository;
 //    }
 
-    private void checkIfUserExist(String phoneNo) {
-        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
-
-        if (user.isEmpty())
-            return;
-
-        if (user.get().isActive())
-            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
-
-        otpService.generateOtp(phoneNo);
-
-        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
-
-    }
+//    private void checkIfUserExist(String phoneNo) {
+//        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
+//
+//        if (user.isEmpty())
+//            return;
+//
+//        if (user.get().isActive())
+//            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
+//
+//        otpService.generateOtp(phoneNo);
+//
+//        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
+//
+//    }
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
 
-        checkIfUserExist(createUserRequest.getPhoneNo());
+        userServiceUtils.checkIfUserExist(createUserRequest.getPhoneNo());
 
         createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
@@ -120,7 +118,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        commanUtils.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
+        userServiceUtils.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
         CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(loginRequest.getPhoneNo());
         String token = jwtHelper.generateToken(customUserDetails);
         return new LoginResponse("Login Successful", HttpStatus.OK, true, token);
