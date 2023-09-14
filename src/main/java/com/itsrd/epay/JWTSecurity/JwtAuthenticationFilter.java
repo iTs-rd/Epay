@@ -1,4 +1,4 @@
-package com.itsrd.epay.jwtSecurity;
+package com.itsrd.epay.JWTSecurity;
 
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (uri.contains(permitedURI))
                 return true;
         return false;
+
     }
 
 
@@ -62,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             token = requestHeader.substring(7);
             try {
-                username = this.jwtHelper.getUsernameFromToken(token);
+                username = jwtHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
                 logger.info("Illegal Argument while fetching the username !!");
                 e.printStackTrace();
@@ -81,8 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            CustomUserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
+            CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            Boolean validateToken = jwtHelper.validateToken(token, userDetails);
             if (validateToken) {
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

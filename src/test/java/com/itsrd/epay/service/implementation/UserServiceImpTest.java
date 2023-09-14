@@ -1,5 +1,6 @@
 package com.itsrd.epay.service.implementation;
 
+import com.itsrd.epay.JWTSecurity.JwtHelper;
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
 import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
@@ -7,13 +8,12 @@ import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
 import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.dto.response.userResponse.*;
-import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.repository.AddressRepository;
 import com.itsrd.epay.repository.UserRepository;
 import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.service.OtpService;
-import com.itsrd.epay.utils.CommanUtils;
+import com.itsrd.epay.utils.UserServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class UserServiceImpTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private CommanUtils commanUtils;
+    private UserServiceUtils userServiceUtils;
 
     @Mock
     private UserRepository userRepository;

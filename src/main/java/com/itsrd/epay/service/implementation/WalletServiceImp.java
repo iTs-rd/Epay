@@ -25,71 +25,13 @@ public class WalletServiceImp implements WalletService {
 
     @Autowired
     private UserService userService;
-
-//    @Autowired
-//    private TransactionService transactionService;
-
+    
     @Autowired
     private WalletRepository walletRepository;
 
     @Autowired
     private WalletServiceUtils walletServiceUtils;
 
-//    private void checkForInsufficientBalance(Double currentFunds, Double withdrawAmount) {
-//        if (currentFunds < withdrawAmount)
-//            throw new InsufficientBalance();
-//    }
-
-//    private void checkForSelfTransfer(String remitterUserId, String beneficiaryUserId) {
-//        if (Objects.equals(remitterUserId, beneficiaryUserId))
-//            throw new CanNotTransferMoneyToSelf();
-//
-//    }
-
-//    private String recordWithdrawal(String phoneNo, Double amount, String remark) {
-//        String description = "Rupee " + amount + " has been debited from your wallet";
-//        transactionService.addRecord(phoneNo, "Withdraw", amount, description, remark);
-//        return description;
-//    }
-//
-//    private String recordDeposit(String phoneNo, Double amount, String remark) {
-//        String description = "Rupee " + amount + " has been credited to your wallet";
-//        transactionService.addRecord(phoneNo, "Deposit", amount, description, remark);
-//        return description;
-//    }
-
-//    private String recordTransfer(String remitterPhoneNo, String beneficiaryPhoneNo, Double amount, String remark) {
-//        String remitterDescription = "Rupee " + amount + " has been Transfer to User: " + beneficiaryPhoneNo;
-//        String beneficiaryDescription = "Rupee " + amount + " has been send by User: " + remitterPhoneNo;
-//
-//        transactionService.addRecord(remitterPhoneNo, "Send", amount, remitterDescription, remark);
-//        transactionService.addRecord(beneficiaryPhoneNo, "Receive", amount, beneficiaryDescription, remark);
-//        return remitterDescription;
-//
-//    }
-
-//    private void withdrawMoneyFromWallet(Long walletId, Double amount) {
-//        Optional<Wallet> wallet = walletRepository.findById(walletId);
-//        if (wallet.isEmpty())
-//            throw new RuntimeException("Withdrawal Wallet Not Found!");
-//
-//        Double currentFunds = wallet.get().getAmount();
-//        walletUtils.checkForInsufficientBalance(currentFunds, amount);
-//
-//        Wallet newWallet = new Wallet(walletId, currentFunds - amount);
-//        walletRepository.save(newWallet);
-//    }
-
-//    private void addMoneyToWallet(Long walletId, Double amount) {
-//        Optional<Wallet> wallet = walletRepository.findById(walletId);
-//        if (wallet.isEmpty())
-//            throw new RuntimeException("Depositor Wallet Not Found!");
-//
-//        Double currentFunds = wallet.get().getAmount();
-//        Wallet newWallet = new Wallet(walletId, currentFunds + amount);
-//        walletRepository.save(newWallet);
-//
-//    }
 
     @Override
     public DepositMoneyResponse depositMoney(Principal principal, DepositMoneyRequest depositMoneyRequest) {

@@ -1,7 +1,7 @@
 package com.itsrd.epay.configuration;
 
+import com.itsrd.epay.JWTSecurity.JwtAuthenticationFilter;
 import com.itsrd.epay.exception.JWTAuthenticationEntryPoint;
-import com.itsrd.epay.jwtSecurity.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package com.itsrd.epay.controller;
 
 
+import com.itsrd.epay.JWTSecurity.JwtHelper;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
 import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
@@ -8,7 +9,6 @@ import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
-import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ public class UserController {
 
     @Autowired
     private JwtHelper jwtHelper;
-
     @Autowired
     private UserService userService;
 

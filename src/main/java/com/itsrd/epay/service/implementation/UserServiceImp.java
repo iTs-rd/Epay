@@ -1,5 +1,6 @@
 package com.itsrd.epay.service.implementation;
 
+import com.itsrd.epay.JWTSecurity.JwtHelper;
 import com.itsrd.epay.configuration.CustomUserDetails;
 import com.itsrd.epay.configuration.CustomUserDetailsService;
 import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
@@ -8,7 +9,6 @@ import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.dto.response.userResponse.*;
 import com.itsrd.epay.exception.UserNotFoundException;
-import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.Address;
 import com.itsrd.epay.model.User;
 import com.itsrd.epay.model.Wallet;
@@ -55,27 +55,7 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private JwtHelper jwtHelper;
-
-//    public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
-//        this.userRepository = userRepository;
-//        this.addressRepository = addressRepository;
-//        this.walletRepository = walletRepository;
-//    }
-
-//    private void checkIfUserExist(String phoneNo) {
-//        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
-//
-//        if (user.isEmpty())
-//            return;
-//
-//        if (user.get().isActive())
-//            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
-//
-//        otpService.generateOtp(phoneNo);
-//
-//        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
-//
-//    }
+    
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
