@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         permitedURIs.add("verify-phoneno");
         permitedURIs.add("login");
         permitedURIs.add("signup");
+        permitedURIs.add("swagger");
 
         for (String permitedURI : permitedURIs)
             if (uri.contains(permitedURI))

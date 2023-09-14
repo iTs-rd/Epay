@@ -7,7 +7,6 @@ import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
 import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.VerifyPhoneNoRequest;
 import com.itsrd.epay.dto.response.userResponse.*;
-import com.itsrd.epay.exception.UserAlreadyExistsException;
 import com.itsrd.epay.exception.UserNotFoundException;
 import com.itsrd.epay.jwtSecurity.JwtHelper;
 import com.itsrd.epay.model.Address;
@@ -18,11 +17,10 @@ import com.itsrd.epay.repository.UserRepository;
 import com.itsrd.epay.repository.WalletRepository;
 import com.itsrd.epay.service.OtpService;
 import com.itsrd.epay.service.UserService;
+import com.itsrd.epay.utils.UserServiceUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +29,7 @@ import java.util.Optional;
 
 
 @Service
+@Slf4j
 public class UserServiceImp implements UserService {
 
     @Autowired
@@ -49,48 +48,39 @@ public class UserServiceImp implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private UserServiceUtils userServiceUtils;
 
     @Autowired
     private JwtHelper jwtHelper;
 
-    public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
-        this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
-        this.walletRepository = walletRepository;
-    }
+//    public UserServiceImp(UserRepository userRepository, AddressRepository addressRepository, WalletRepository walletRepository) {
+//        this.userRepository = userRepository;
+//        this.addressRepository = addressRepository;
+//        this.walletRepository = walletRepository;
+//    }
 
-    private void checkIfUserExist(String phoneNo) {
-        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
-
-        if (user.isEmpty())
-            return;
-
-        if (user.get().isActive())
-            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
-
-        otpService.generateOtp(phoneNo);
-
-        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
-
-    }
-
-    private void doAuthenticate(String email, String password) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            authenticationManager.authenticate(authentication);
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
-        }
-    }
+//    private void checkIfUserExist(String phoneNo) {
+//        Optional<User> user = userRepository.findByPhoneNo(phoneNo);
+//
+//        if (user.isEmpty())
+//            return;
+//
+//        if (user.get().isActive())
+//            throw new UserAlreadyExistsException("User with Phone No: " + phoneNo + " already Exists");
+//
+//        otpService.generateOtp(phoneNo);
+//
+//        throw new UserAlreadyExistsException("User Already exist. New OTP is generated please verify with new otp");
+//
+//    }
 
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
 
-        checkIfUserExist(createUserRequest.getPhoneNo());
+        userServiceUtils.checkIfUserExist(createUserRequest.getPhoneNo());
 
         createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
@@ -128,9 +118,9 @@ public class UserServiceImp implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        this.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
+        userServiceUtils.doAuthenticate(loginRequest.getPhoneNo(), loginRequest.getPassword());
         CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(loginRequest.getPhoneNo());
-        String token = this.jwtHelper.generateToken(customUserDetails);
+        String token = jwtHelper.generateToken(customUserDetails);
         return new LoginResponse("Login Successful", HttpStatus.OK, true, token);
     }
 
