@@ -1,5 +1,6 @@
 package com.itsrd.epay.dto.requests.userRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,9 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUserRequest {
 
+    @JsonIgnore
     private final String firstNameMessage = "First Name Should be between 1 to 256 characters";
+    @JsonIgnore
     private final String lastNameMessage = "Last Name Should be between 1 to 256 characters";
+    @JsonIgnore
     private final String phoneNoMessage = "Phone no Should be of 10 digit";
+    @JsonIgnore
     private final String zipCodeMessage = "Zip Code Should be of 6 digit";
 
 

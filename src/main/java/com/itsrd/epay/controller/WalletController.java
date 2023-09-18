@@ -23,29 +23,26 @@ import java.security.Principal;
 @EnableTransactionManagement
 public class WalletController {
 
-
     @Autowired
     private WalletService walletService;
 
-
     @PostMapping("/deposit")
     public ResponseEntity<DepositMoneyResponse> depositMoney(Principal principal, @Valid @RequestBody DepositMoneyRequest depositMoneyRequest) {
-        return new ResponseEntity<>(walletService.depositMoney(principal, depositMoneyRequest), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.depositMoney(principal, depositMoneyRequest), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/withdrawal")
     public ResponseEntity<WithdrawMoneyResponse> withdrawalMoney(Principal principal, @Valid @RequestBody WithdrawMoneyRequest withdrawMoneyRequest) {
-        return new ResponseEntity<>(walletService.withdrawMoney(principal, withdrawMoneyRequest), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.withdrawMoney(principal, withdrawMoneyRequest), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/transfer")
     public ResponseEntity<TransferMoneyResponse> transferMoney(Principal principal, @Valid @RequestBody TransferMoneyRequest transferMoneyRequest) {
-        return new ResponseEntity<>(walletService.transferMoney(principal, transferMoneyRequest), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.transferMoney(principal, transferMoneyRequest), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/checkbalance")
     public ResponseEntity<CheckBalanceResponse> checkBalance(Principal principal) {
-//        Long userId = Long.valueOf(id);
         return new ResponseEntity<>(walletService.checkBalance(principal), HttpStatus.OK);
     }
 }

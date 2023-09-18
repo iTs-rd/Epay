@@ -25,7 +25,7 @@ public class WalletServiceImp implements WalletService {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private WalletRepository walletRepository;
 

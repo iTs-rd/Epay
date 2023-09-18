@@ -1,8 +1,6 @@
 package com.itsrd.epay.controller;
 
 
-import com.itsrd.epay.JWTSecurity.JwtHelper;
-import com.itsrd.epay.configuration.CustomUserDetailsService;
 import com.itsrd.epay.dto.requests.userRequest.CreateUserRequest;
 import com.itsrd.epay.dto.requests.userRequest.LoginRequest;
 import com.itsrd.epay.dto.requests.userRequest.UpdateUserRequest;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -25,14 +22,6 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private JwtHelper jwtHelper;
     @Autowired
     private UserService userService;
 

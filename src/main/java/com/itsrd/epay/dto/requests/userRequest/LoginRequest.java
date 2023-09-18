@@ -1,5 +1,6 @@
 package com.itsrd.epay.dto.requests.userRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest {
 
+    @JsonIgnore
     private final String phoneNoMessage = "Phone no Should be of 10 digit";
 
     @NotNull(message = phoneNoMessage)

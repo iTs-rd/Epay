@@ -25,8 +25,8 @@ public class WalletServiceUtils {
             throw new InsufficientBalance();
     }
 
-    public void checkForSelfTransfer(String remitterUserId, String beneficiaryUserId) {
-        if (Objects.equals(remitterUserId, beneficiaryUserId))
+    public void checkForSelfTransfer(String remitterPhoneNo, String beneficiaryPhoneNo) {
+        if (Objects.equals(remitterPhoneNo, beneficiaryPhoneNo))
             throw new CanNotTransferMoneyToSelf();
 
     }
@@ -59,6 +59,7 @@ public class WalletServiceUtils {
             throw new RuntimeException("Withdrawal Wallet Not Found!");
 
         Double currentFunds = wallet.get().getAmount();
+//
         checkForInsufficientBalance(currentFunds, amount);
 
         Wallet newWallet = new Wallet(walletId, currentFunds - amount);
@@ -69,7 +70,6 @@ public class WalletServiceUtils {
         Optional<Wallet> wallet = walletRepository.findById(walletId);
         if (wallet.isEmpty())
             throw new RuntimeException("Depositor Wallet Not Found!");
-
         Double currentFunds = wallet.get().getAmount();
         Wallet newWallet = new Wallet(walletId, currentFunds + amount);
         walletRepository.save(newWallet);

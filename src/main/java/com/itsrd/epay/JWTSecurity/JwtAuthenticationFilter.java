@@ -29,27 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    boolean checkForPublicURI(String uri) {
+        ArrayList<String> publicURIs = new ArrayList<>();
 
-    boolean checkForUnprotectedURI(String uri) {
-        ArrayList<String> permitedURIs = new ArrayList<>();
+        publicURIs.add("verify-phoneno");
+        publicURIs.add("login");
+        publicURIs.add("signup");
+        publicURIs.add("swagger");
+        publicURIs.add("v3");
 
-        permitedURIs.add("verify-phoneno");
-        permitedURIs.add("login");
-        permitedURIs.add("signup");
-        permitedURIs.add("swagger");
-
-        for (String permitedURI : permitedURIs)
-            if (uri.contains(permitedURI))
+        for (String publicURI : publicURIs)
+            if (uri.contains(publicURI))
                 return true;
         return false;
 
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (checkForUnprotectedURI(request.getRequestURI())) {
+        if (checkForPublicURI(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -85,16 +84,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             CustomUserDetails userDetails = userDetailsService.loadUserByUsername(username);
             Boolean validateToken = jwtHelper.validateToken(token, userDetails);
             if (validateToken) {
-
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } else {
                 logger.info("Validation fails !!");
             }
-
-
         }
 
         filterChain.doFilter(request, response);

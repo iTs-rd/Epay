@@ -93,28 +93,3 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 }
-
-
-//@ControllerAdvice
-//public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-//
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//                                                                  HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-//
-//        Map<String, Object> body = new LinkedHashMap<>();
-//        body.put("timestamp", System.currentTimeMillis());
-//        body.put("status", status.value());
-//        Dictionary<String, String> errors = new Hashtable<>();
-//
-//        ex.getBindingResult()
-//                .getFieldErrors()
-//                .stream()
-//                .map(err -> errors.put(err.getField(), err.getDefaultMessage()))
-//                .collect(Collectors.toList());
-//        body.put("errors", errors);
-//        return new ResponseEntity<Object>(body, status);
-//    }
-//
-//
-//}

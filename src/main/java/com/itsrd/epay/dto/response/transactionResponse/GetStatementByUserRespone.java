@@ -12,12 +12,7 @@ public class GetStatementByUserRespone extends GlobalResponse {
     int currentPageNo;
     int totalNoOfPages;
     List<Transaction> transaction;
-
-//    public GetStatementByUserRespone(String message, boolean success, HttpStatus stateCode, int currentPageNo, int totalNoOfPages, List<Transaction> transaction) {
-//        super(message, success, stateCode);
-//        this.transaction = transaction;
-//    }
-
+    
     public GetStatementByUserRespone(List<Transaction> transaction, int currentPageNo, int totalNoOfPages, String message, boolean success, HttpStatus stateCode) {
         super(message, success, stateCode);
         this.transaction = transaction;
