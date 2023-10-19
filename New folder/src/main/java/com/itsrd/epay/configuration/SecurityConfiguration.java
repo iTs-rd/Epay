@@ -25,15 +25,14 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 public class SecurityConfiguration {
 
+
     public static final String[] PUBLIC_URLS = {
             "/user/signup",
             "/user/login",
             "/user/verify-phoneno",
-            "/user/test",
     };
     @Autowired
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
