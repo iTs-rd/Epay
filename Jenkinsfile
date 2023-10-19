@@ -1,10 +1,6 @@
 #!groovy
 
 pipeline {
-    agent {
-        // Here we define that we wish to run on the agent with the label SL202_win
-        label "SL202_win"
-    }
     agent none  stages {
         stage('Maven Install') {
             agent {
@@ -17,13 +13,13 @@ pipeline {
             }
         }
         stage('Docker Build') {
-            agent any
+            agent NONE
             steps {
                 sh 'docker build -t itsrd/epay:latest .'
             }
         }
         stage('Docker Push') {
-            agent SL202_win
+            agent none
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerhubPassword', usernameVariable: 'dockerhubUser')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
