@@ -14,7 +14,7 @@ pipeline {
                 }
             }
             stage('Docker Build') {
-                agent none
+                agent any
                     steps {
                         sh 'docker build -t itsrd/epay:latest .'
                     }
