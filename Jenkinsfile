@@ -2,27 +2,31 @@
 
 pipeline {
     agent none
-        stages {
-            stage('Maven Install') {
-                agent any
-                    steps {
-                        sh 'mvn clean install'
-                    }
+    stages {
+        stage('Maven Install') {
+            agent {
+                docker {
+                    image 'maven:3.9.4'
+                }
             }
-            stage('Docker Build') {
-                agent any
-                    steps {
-                        sh 'docker build -t itsrd/epay:latest .'
-                    }
+            steps {
+                sh 'mvn clean install'
             }
-            stage('Docker Push') {
-                agent any
-                    steps {
-                        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                            sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                            sh 'docker push itsrd/epay:latest'
-                        }
-                    }
+        }
+        stage('Docker Build') {
+            agent any
+            steps {
+                sh 'docker build -t itsrd/epay:latest .'
             }
+        }
+        stage('Docker Push') {
+            agent any
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh 'docker push itsrd/epay:latest'
+                }
+            }
+        }
     }
 }
