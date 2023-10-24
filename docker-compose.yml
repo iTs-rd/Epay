@@ -46,8 +46,8 @@ services:
         - elasticsearch
       environment:
         ELASTIC_DB_HOST: elasticsearch
-        ELASTIC_DB_PORT: 9200
-        DB_HOST: db:3306
+        ELASTIC_DB_PORT: 9200      #port is of internal server not of which is open in docker (port no. is always 9200 in docker compose because we are calling it via its service name i.e. elasticsearch)
+        DB_HOST: db:3306          #(port no. is always 9200 in docker compose because we are calling it via its service name i.e. db)
         SPRING_DATASOURCE_USERNAME: root
         SPRING_DATASOURCE_PASSWORD: root
       networks:

@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         publicURIs.add("login");
         publicURIs.add("signup");
         publicURIs.add("swagger");
-        publicURIs.add("v3");
+        publicURIs.add("swagger-ui");
 
         for (String publicURI : publicURIs)
             if (uri.contains(publicURI))
