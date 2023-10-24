@@ -71,8 +71,6 @@ NOTE:
 
 
 ## Resources
-Postman Collection -> https://documenter.getpostman.com/view/14782873/2s9Y5ctfZt
-
 - use full command 
 1)  ```docker run -p 9200:9200 -d -m 1GB -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.14```
 2) ```docker run -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=root mysql```
