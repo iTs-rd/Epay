@@ -22,7 +22,7 @@ spring:
 
 elasticsearch:
   hostname: ${ELASTIC_DB_HOST:localhost}
-  port: ${ELASTIC_DB_PORT:9201}
+  port: ${ELASTIC_DB_PORT:9200}
 
 
 statement:

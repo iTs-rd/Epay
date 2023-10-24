@@ -58,5 +58,9 @@ public class UserController {
         return new ResponseEntity<>(userService.deleteUser(principal), HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<>("Working...", HttpStatus.ACCEPTED);
+    }
 
 }
