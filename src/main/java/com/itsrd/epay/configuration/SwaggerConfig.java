@@ -1,55 +1,34 @@
 package com.itsrd.epay.configuration;
 
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
-    public static final String AUTH_HEADER = "Authorization";
-
-    private ApiInfo getInfo() {
-        return new ApiInfo("Epay application", "Send money easily", "1.0", "Terms Of Service",
-                new Contact("Rudresh", "https://github.com/iTs-rd", "rudreshgpt7@gmail.com"),
-                "License of APIS", "API license URL", Collections.emptyList());
-    }
-
-    private List<SecurityContext> getSecurityContexts() {
-        return Arrays.asList(SecurityContext.builder().securityReferences(securityReferences()).build());
-    }
-
-    private List<SecurityReference> securityReferences() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEvetything");
-        return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[]{authorizationScope}));
-    }
-
-    private ApiKey apiKey() {
-        return new ApiKey("JWT", AUTH_HEADER, "header");
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
     }
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(getInfo())
-                .securityContexts(getSecurityContexts())
-                .securitySchemes(Arrays.asList(apiKey()))
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
-
+    public OpenAPI openAPI() {
+        return new OpenAPI().addSecurityItem(new SecurityRequirement().
+                        addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes
+                        ("Bearer Authentication", createAPIKeyScheme()))
+                .info(new Info().title("Epay REST APIs")
+                        .version("1.0").contact(new Contact().name("Rudresh Gupta")
+                                .url("https://www.linkedin.com/in/its-rd/"))
+                );
     }
-
 
 }

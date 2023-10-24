@@ -17,7 +17,7 @@ spring:
   data:
     elasticsearch:
       cluster-names: elasticsearch
-      cluster-nodes: localhost:9201
+      cluster-nodes: localhost:9200
 
 
 elasticsearch:
