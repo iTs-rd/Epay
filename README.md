@@ -4,6 +4,9 @@ With ePay, users can create and update their unique IDs, add funds securely, wit
 and seamlessly transfer funds to other users. This platform empowers individuals with control over their finances, 
 offering a simple and secure solution for all their digital wallet needs.
 
+## Tech Stack
+    #Spring_boot #Mysql #Elasticsearch #Jenkins #Swagger_UI #Docker 
+    
 ## Key Words
     #JWT_Tokens #Transactional_Nature #Elasticsearch #Jenkins #CI/CD
     #Unit_Test_Case #JUnit #Swagger_UI #Docker #Docker_Compose #OTP_Verification
